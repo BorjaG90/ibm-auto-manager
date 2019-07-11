@@ -1,8 +1,0 @@
-{
-    "mongodb": "mongodb",
-    "proxy": "proxy",
-    "user": {
-        "alias": "BNueveDos",
-        "password": "password"
-    }
-}

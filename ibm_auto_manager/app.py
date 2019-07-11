@@ -19,11 +19,11 @@ def config(settings):
   """ Obtenemos la configuración de la app desde el fichero solicitado. 
     En caso de que no exista, solictamos los datos mínimos y lo creamos."""
 
-  if os.path.isfile('./config/settings.json'):
+  if os.path.isfile('./ibm_auto_manager/config/settings.json'):
     print("[config] Encontrado fichero configuración")
 
-    with open('./config/settings.json') as settings_file:
-      setings = json.load(settings_file)
+    with open('./ibm_auto_manager/config/settings.json') as settings_file:
+      settings = json.load(settings_file)
     settings_file.close
 
     print("[config] Configuración cargada con éxito")
@@ -42,6 +42,13 @@ def config(settings):
     settings['user']['password'] = ""
     while settings['user']['password'] ==  "":
       settings['user']['password'] = getpass.getpass(" Introduce tu Password: ")
+    
+    # Creamos el fichero de configuración
+    print("[config] Fichero de configuración creado con éxito")
+
+    with open('./ibm_auto_manager/config/settings.json', 'w') as settings_file:
+      json.dump(settings, settings_file, indent=4, ensure_ascii=False)
+    settings_file.close
 
     print("[config] Configuración cargada con éxito")
   
