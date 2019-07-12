@@ -151,7 +151,7 @@ def run(arg=""):
   
   connection = connect()
 
-  if arg == "market" or arg== "-m":
+  if arg == "--market" or arg== "-m" or arg== "market":
     """ Ejecución exclusiva del analísis de mercado """
     print("********IBM Auto Manager**********")
     print("\nAnalizando mercado")
@@ -163,12 +163,12 @@ def run(arg=""):
       cls()
 
       print("********IBM Auto Manager**********")
-      print("\n[1] Analizar mercado")
+      print("\n[m] Analizar mercado")
       print("\n[0] Salir del programa\n")
 
       opcion = input("Introduce una opción: > ")
 
-      if opcion == "1":
+      if opcion == "m":
         market.enter_market(connection["auth"], connection["db"])
 
       elif opcion == "0":
