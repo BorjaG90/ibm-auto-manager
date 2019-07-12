@@ -12,8 +12,10 @@ import json
 import getpass
 
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
 
 from ibm_auto_manager.connection.login_page import login
+from ibm_auto_manager.general import profile
 
 # ----- Functions -----
 def cls():
@@ -105,6 +107,18 @@ def config():
   return settings
 
 
+def save_profile(db, money):
+  db.profile.delete_many({})
+  pf = profile.Profile(1, money)
+  db.profile.insert_one(pf.to_db_collection())
+
+  if (db.profile.find_one({"id": 1}) is not None):
+    pfe = db.profile.find_one({"id": 1})
+    print(pfe)
+  else:
+    print("Error")
+
+
 # =====================
 #     -- Start --
 # =====================
@@ -123,9 +137,13 @@ def run():
     "dest": None
   }
 
+  # Database
+  mongoClient = MongoClient(settings["mongodb"])
+  db = mongoClient['ibm-auto-manager']
+
   session = login(auth)
     
-  # Probamos obteniendo el dinero
+  # Probamos el login obteniendo el dinero
   r = session.get("http://es.ibasketmanager.com/inicio.php")
   load_status = 0
   while load_status != 200:
@@ -133,8 +151,13 @@ def run():
 
   soup = BeautifulSoup(r.content, "html.parser")
 
-  print(str(soup.find("a", {"id": "dineros"}).text
-    ).replace("€", "").replace(".", "").replace(" ", "") + " €.")
+  money = str(soup.find("a", {"id": "dineros"}).text
+    ).replace("€", "").replace(".", "").replace(" ", "")
+
+  print(money + " €.")
+
+  # Probamos la conexion a BD guardando el dinero
+  save_profile(db, money)
 
   input("Pulse para salir...")
   cls()
