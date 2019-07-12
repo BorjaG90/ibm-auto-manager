@@ -8,7 +8,6 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 import os
-import time
 import json
 import getpass
 
@@ -17,7 +16,7 @@ from pymongo import MongoClient
 
 from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.connection.login_page import login
-from ibm_auto_manager.general import profile
+from ibm_auto_manager.scout import market
 
 # ----- Functions -----
 def config():
@@ -101,12 +100,37 @@ def config():
     os.environ["HTTPS_PROXY"] = settings["proxy"]
 
   print(show("config") + "Configuración aplicada con éxito")
-  input(" Pulse para continuar...")
 
   return settings
 
-def analyze_market():
-  """ Obtenemos las ofertas del mercado """
+def connect():
+  """ Realizamos las configuraciones y conexiones necesarias para el 
+  funcionamiento de la aplicación y las devolvemos en un diccionario"""
+
+  cls()
+
+  # Obtenemos la configuración
+  settings = config()
+  cls()
+
+  # Login
+  auth = {
+    "alias": settings["user"]["alias"], 
+    "pass": settings["user"]["password"], 
+    "dest": None
+  }
+
+  # Database
+  mongoClient = MongoClient(settings["mongodb"])
+  db = mongoClient['ibm-auto-manager']
+
+  connection = {
+    "settings": settings,
+    "auth": auth,
+    "db": db
+  }
+
+  return connection
 
 
 # def save_profile(db, money):
@@ -126,40 +150,30 @@ def analyze_market():
 # =====================
 def run():
   
-  cls()
+  connection = connect()
 
-  # Obtenemos la configuración
-  settings = config()
-  cls()
+  # Menu
+  while True:
+    cls()
 
-  # Login
-  auth = {
-    "alias": settings["user"]["alias"], 
-    "pass": settings["user"]["password"], 
-    "dest": None
-  }
+    print("\n**IBM Auto Manager**")
+    print("\n[1] Analizar mercado")
+    print("\n[0] Salir del programa\n")
 
-  # Database
-  mongoClient = MongoClient(settings["mongodb"])
-  db = mongoClient['ibm-auto-manager']
+    opcion = input("Introduce una opción: > ")
 
-  session = login(auth)
-    
-# # Probamos el login obteniendo el dinero
-  # r = session.get("http://es.ibasketmanager.com/inicio.php")
-  # load_status = 0
-  # while load_status != 200:
-  #   load_status = r.status_code
+    if opcion == "1":
+      market.enter_market(connection["auth"], connection["db"])
 
-  # soup = BeautifulSoup(r.content, "html.parser")
+    elif opcion == "0":
+      print("Cerrando programa!")
+      cls()
+      break
 
-  # money = str(soup.find("a", {"id": "dineros"}).text
-  #   ).replace("€", "").replace(".", "").replace(" ", "")
+    else:
+      print("Opción incorrecta")
 
-  # print(money + " €.")
-
-  # # Probamos la conexion a BD guardando el dinero
-  # save_profile(db, money)
+    input("\nPulse para continuar...")
 
   input("Pulse para salir...")
   cls()
