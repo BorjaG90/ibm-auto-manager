@@ -15,7 +15,6 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from ibm_auto_manager.common.util import cls, show
-from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import market
 
 # ----- Functions -----
@@ -143,37 +142,46 @@ def connect():
 #     print(pfe)
 #   else:
 #     print("Error")
-
+  
 
 # =====================
 #     -- Start --
 # =====================
-def run():
+def run(arg=""):
   
   connection = connect()
 
-  # Menu
-  while True:
-    cls()
-
-    print("\n**IBM Auto Manager**")
-    print("\n[1] Analizar mercado")
-    print("\n[0] Salir del programa\n")
-
-    opcion = input("Introduce una opción: > ")
-
-    if opcion == "1":
-      market.enter_market(connection["auth"], connection["db"])
-
-    elif opcion == "0":
-      print("Cerrando programa!")
+  if arg == "market" or arg== "-m":
+    """ Ejecución exclusiva del analísis de mercado """
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando mercado")
+    market.enter_market(connection["auth"], connection["db"])
+  if arg == "":
+    """ Ejecución normal """
+    # Menu
+    while True:
       cls()
-      break
 
-    else:
-      print("Opción incorrecta")
+      print("********IBM Auto Manager**********")
+      print("\n[1] Analizar mercado")
+      print("\n[0] Salir del programa\n")
 
-    input("\nPulse para continuar...")
+      opcion = input("Introduce una opción: > ")
 
-  input("Pulse para salir...")
-  cls()
+      if opcion == "1":
+        market.enter_market(connection["auth"], connection["db"])
+
+      elif opcion == "0":
+        print("Cerrando programa!")
+        cls()
+        break
+
+      else:
+        print("Opción incorrecta")
+
+      input("\nPulse para continuar...")
+
+    input("Pulse para salir...")
+    cls()
+  else:
+    print("No se reconoce este comando")
