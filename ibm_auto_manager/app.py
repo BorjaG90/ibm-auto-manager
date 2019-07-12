@@ -8,44 +8,43 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 import os
+import time
 import json
 import getpass
 
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
+from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.general import profile
 
 # ----- Functions -----
-def cls():
-  os.system('cls' if os.name=='nt' else 'clear')
-
 def config():
   """ Obtenemos la configuración de la app desde el fichero solicitado. 
     En caso de que no exista, solictamos los datos necesarios y lo creamos."""
   
   settings = {}
   if os.path.isfile('./ibm_auto_manager/config/settings.json'):
-    print("[config] Encontrado fichero configuración")
+    print(show("config") + "Encontrado fichero configuración")
 
     with open("./ibm_auto_manager/config/settings.json", "r") as settings_file:
       settings = json.load(settings_file)
     settings_file.close
 
-    print("[config] Configuración cargada con éxito")
+    print(show("config") + "Configuración cargada con éxito")
   else :
-    print("[config] ! No se encuentra fichero de configuración")
-    print("[config] ! Se va a proceder a generar el fichero")
-    print("[config] ! Se realizaran múltiples preguntas")
+    print(show("config") + "! No se encuentra fichero de configuración")
+    print(show("config") + "! Se va a proceder a generar el fichero")
+    print(show("config") + "! Se realizaran múltiples preguntas")
     
-    print("\n[config] Configuración de conexión")
+    print("\n" + show("config") + "Configuración de conexión")
     settings["mongodb"] = ""
     while settings["mongodb"] == "":
       settings["mongodb"] = input(" Introduce la cadena de conexión a la BD: ")
     settings["proxy"] = input(" Introduce la cadena del proxy (opcional): ")
 
-    print("\n[config] Configuración de usuario")
+    print("\n" + show("config") + "Configuración de usuario")
     settings["user"] = {}
     settings["user"]["alias"] = ""
     while settings["user"]["alias"] == "":
@@ -54,7 +53,7 @@ def config():
     while settings["user"]["password"] ==  "":
       settings["user"]["password"] = getpass.getpass(" Introduce tu Password: ")
 
-    print("\n[config] Configuración de automatización (Tienda)")
+    print("\n" + show("config") + "Configuración de automatización (Tienda)")
     settings["shop"] = {}
     settings["shop"]["llaveros"] = input(" Introduce cantidad de Llaveros (6400): ") or "6400"
     settings["shop"]["banderolas"] = input(" Introduce cantidad de Banderolas (6400): ") or "6400"
@@ -62,7 +61,7 @@ def config():
     settings["shop"]["camisetas"] = input(" Introduce cantidad de Camisetas (6400): ") or "6400"
     settings["shop"]["zapatillas"] = input(" Introduce cantidad de Zapatillas (6400): ") or "6400"
 
-    print("\n[config] Configuración de automatización (Catering)")
+    print("\n" + show("config") + "Configuración de automatización (Catering)")
     settings["catering"] = {}
     settings["catering"]["refrescos"] = input(" Introduce cantidad de Refrescos (2000): ") or "2000"
     settings["catering"]["frankfurts"] = input(" Introduce cantidad de Frankfurts (1000): ") or "1000"
@@ -86,13 +85,13 @@ def config():
     settings["catering"]["caviar"] = input(" Introduce cantidad de Caviar (1000): ") or "1000"
     
     # Creamos el fichero de configuración
-    print("[config] Fichero de configuración creado con éxito")
+    print(show("config") + "Fichero de configuración creado con éxito")
 
     with open("./ibm_auto_manager/config/settings.json", "w") as settings_file:
       json.dump(settings, settings_file, indent=4, ensure_ascii=False)
     settings_file.close
 
-    print("[config] Configuración cargada con éxito")
+    print(show("config") + "Configuración cargada con éxito")
   
   # Aplicamos la configuración
   if settings["proxy"] != "":
@@ -101,22 +100,25 @@ def config():
     os.environ["https_proxy"] = settings["proxy"]
     os.environ["HTTPS_PROXY"] = settings["proxy"]
 
-  print("[config] Configuración aplicada con éxito")
+  print(show("config") + "Configuración aplicada con éxito")
   input(" Pulse para continuar...")
 
   return settings
 
+def analyze_market():
+  """ Obtenemos las ofertas del mercado """
 
-def save_profile(db, money):
-  db.profile.delete_many({})
-  pf = profile.Profile(1, money)
-  db.profile.insert_one(pf.to_db_collection())
 
-  if (db.profile.find_one({"id": 1}) is not None):
-    pfe = db.profile.find_one({"id": 1})
-    print(pfe)
-  else:
-    print("Error")
+# def save_profile(db, money):
+#   db.profile.delete_many({})
+#   pf = profile.Profile(1, money)
+#   db.profile.insert_one(pf.to_db_collection())
+
+#   if (db.profile.find_one({"id": 1}) is not None):
+#     pfe = db.profile.find_one({"id": 1})
+#     print(pfe)
+#   else:
+#     print("Error")
 
 
 # =====================
@@ -143,21 +145,21 @@ def run():
 
   session = login(auth)
     
-  # Probamos el login obteniendo el dinero
-  r = session.get("http://es.ibasketmanager.com/inicio.php")
-  load_status = 0
-  while load_status != 200:
-    load_status = r.status_code
+# # Probamos el login obteniendo el dinero
+  # r = session.get("http://es.ibasketmanager.com/inicio.php")
+  # load_status = 0
+  # while load_status != 200:
+  #   load_status = r.status_code
 
-  soup = BeautifulSoup(r.content, "html.parser")
+  # soup = BeautifulSoup(r.content, "html.parser")
 
-  money = str(soup.find("a", {"id": "dineros"}).text
-    ).replace("€", "").replace(".", "").replace(" ", "")
+  # money = str(soup.find("a", {"id": "dineros"}).text
+  #   ).replace("€", "").replace(".", "").replace(" ", "")
 
-  print(money + " €.")
+  # print(money + " €.")
 
-  # Probamos la conexion a BD guardando el dinero
-  save_profile(db, money)
+  # # Probamos la conexion a BD guardando el dinero
+  # save_profile(db, money)
 
   input("Pulse para salir...")
   cls()
