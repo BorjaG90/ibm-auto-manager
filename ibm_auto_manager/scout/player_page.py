@@ -52,7 +52,7 @@ def analyze_player_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   
   # Datos
-  name = soup.find('div', {"class": "barrajugador"})
+  name = soup.find("div", {"class": "barrajugador"})
   if name is not None:  # El jugador está en medio de un partido
     name = name.text.strip()
     name = str(re.search(r'[A-ZÁÉÍÓÚ][\w\W]+', name).group(0))
@@ -63,9 +63,9 @@ def analyze_player_page(id_player, html_content):
     else:
       juvenil = False
     name = name.strip()
-    caja50 = soup.find_all('div', {"class": "caja50"})
-    data0 = caja50[0].find_all('td')
-    data1 = caja50[1].find_all('td')
+    caja50 = soup.find_all("div", {"class": "caja50"})
+    data0 = caja50[0].find_all("td")
+    data1 = caja50[1].find_all("td")
 
     position = data0[1].text
     age = str(re.search(r'[\d]+', data0[3].text).group(0)).strip()
@@ -86,7 +86,7 @@ def analyze_player_page(id_player, html_content):
     country = data1[9].text.strip()
 
     # Atributos
-    bars = soup.find_all('div', {"class": "jugbarranum"})
+    bars = soup.find_all("div", {"class": "jugbarranum"})
 
     # print("---Atributos---")
     power = bars[0].text
@@ -113,9 +113,9 @@ def analyze_player_page(id_player, html_content):
     #   print(str(t.text))
 
     # print("--Medias--")
-    caja5b = soup.find('div', {"class": "caja5b"})
-    mrx = caja5b.find('div', {"class": "mrx"}).find_all(
-      'td', {"class": "rojo"})
+    caja5b = soup.find("div", {"class": "caja5b"})
+    mrx = caja5b.find("div", {"class": "mrx"}).find_all(
+      "td", {"class": "rojo"})
     mental = mrx[0].text.replace('.', '').strip()
     physic = mrx[1].text.replace('.', '').strip()
     defense = mrx[2].text.replace('.', '').strip()
@@ -207,9 +207,9 @@ def analyze_similar_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   # Datos
   transactions = []
-  final = soup.find('div', {'class': 'texto final'})
+  final = soup.find("div", {'class': 'texto final'})
   # print(final)
-  mensaje = soup.find('div', {"id": "menserror"})  # Playing a game
+  mensaje = soup.find("div", {"id": "menserror"})  # Playing a game
   # print(mensaje)
   if(final is None and mensaje is None):
     # If there is auctions with that filter
@@ -219,9 +219,9 @@ def analyze_similar_page(id_player, html_content):
 
     for player_str in players_str:
       player_soup = BeautifulSoup(str(player_str), 'html.parser')
-      data_player = player_soup.find_all('td')
+      data_player = player_soup.find_all("td")
       name = str(data_player[0].find('a').text)
-      id_date_buy = data_player[1].find('div').text
+      id_date_buy = data_player[1].find("div").text
       date_buy = text.date_translation(
           data_player[1].text.replace(id_date_buy, '').strip())
       age = data_player[2].text
