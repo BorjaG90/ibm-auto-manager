@@ -71,5 +71,5 @@ class Transaction:
       "salary": self.salary,
       "type_buy": self.type_buy,
       "date_buy": self.date_buy,
-      "_date": datetime.datetime.Now()
+      "_date": datetime.datetime.now()
     }

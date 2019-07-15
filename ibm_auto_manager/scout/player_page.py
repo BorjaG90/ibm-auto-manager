@@ -4,10 +4,12 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 import re
+import time
 
 from bs4 import BeautifulSoup
 
 from ibm_auto_manager.common import text
+from ibm_auto_manager.common.util import show
 from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import player, transaction
 
@@ -26,13 +28,15 @@ def get_player_data(id_player, auth):
   # id_player = 7856412
   player_url = 'http://es.ibasketmanager.com/'
   player_url = player_url + 'jugador.php?id_jugador=' + str(id_player)
-  # print('[' + time.strftime("%H:%M:%S") + '] >{ ' + player_url + ' }')
+  # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
   while load_status != 200:
     load_status = r.status_code
 
   v_player = analyze_player_page(id_player, r.content)
+
+  return v_player
 
 
 def analyze_player_page(id_player, html_content):
@@ -180,18 +184,18 @@ def get_similar_data(id_player, auth, register_date=None):
   # id_player = 7856412
   player_url = 'http://es.ibasketmanager.com/jugador_compras_similares.php?'
   player_url = player_url + 'id_jugador=' + str(id_player)
-  # print('[' + time.strftime("%H:%M:%S") + '] >{ ' + player_url + ' }')
+  # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
   while load_status != 200:
     load_status = r.status_code
 
-  transactions = analyze_similar_page(id_player, r.content, register_date)
+  transactions = analyze_similar_page(id_player, r.content)
 
   return transactions
 
 
-def analyze_similar_page(id_player, html_content, register_date=None):
+def analyze_similar_page(id_player, html_content):
   """ Analizamos la página de transacciones similares del jugador
     y devolvemos una tupla con sus datos y atributos
 
@@ -216,7 +220,7 @@ def analyze_similar_page(id_player, html_content, register_date=None):
     for player_str in players_str:
       player_soup = BeautifulSoup(str(player_str), 'html.parser')
       data_player = player_soup.find_all('td')
-      # name = str(data_player[0].find('a').text)
+      name = str(data_player[0].find('a').text)
       id_date_buy = data_player[1].find('div').text
       date_buy = text.date_translation(
           data_player[1].text.replace(id_date_buy, '').strip())

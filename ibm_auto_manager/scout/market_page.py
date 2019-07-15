@@ -8,9 +8,7 @@ from bs4 import BeautifulSoup
 from ibm_auto_manager.common import text
 from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.connection.login_page import login
-from ibm_auto_manager.scout import player_page
-
-from ..scout import auction
+from ibm_auto_manager.scout import player_page, auction
 
 def enter_market(auth, db):
   """ Recorremos las páginas de mercado

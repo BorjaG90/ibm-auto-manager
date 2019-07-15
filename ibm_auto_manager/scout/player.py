@@ -67,3 +67,101 @@ class Player:
       "country": self.country,
       "_date": datetime.datetime.now()
     }
+
+class PlayerAtributes:
+  """Representa los atributos de un jugador."""
+
+  def __init__(self,
+              id_player,
+              power,
+              ambition,
+              leadership,
+              exp,
+              speed,
+              jump,
+              endurance,
+              level,
+              marking,
+              rebound,
+              block,
+              recover,
+              two,
+              three,
+              free,
+              assist,
+              dribbling,
+              dunk,
+              fight,
+              mental,
+              physic,
+              defense,
+              offense,
+              total
+              ):
+    self.id_player = int(id_player)
+    self.power = int(power)
+    self.ambition = int(ambition)
+    self.leadership = int(leadership)
+    self.exp = int(exp)
+    self.speed = int(speed)
+    self.jump = int(jump)
+    self.endurance = int(endurance)
+    self.level = int(level)
+    self.marking = int(marking)
+    self.rebound = int(rebound)
+    self.block = int(block)
+    self.recover = int(recover)
+    self.two = int(two)
+    self.three = int(three)
+    self.free = int(free)
+    self.assist = int(assist)
+    self.dribbling = int(dribbling)
+    self.dunk = int(dunk)
+    self.fight = int(fight)
+    self.mental = int(mental)
+    self.physic = int(physic)
+    self.defense = int(defense)
+    self.offense = int(offense)
+    self.total = int(total)
+
+  def __str__(self):
+    return "Id: {}, medias -> Tot: {}, Off: {}, Def: {}, \
+    Mnt: {}, Fis: {}".format(
+      self.id_player,
+      self.total / 100,
+      self.offense / 100,
+      self.defense / 100,
+      self.mental / 100,
+      self.physic / 100
+    )
+
+  def to_db_collection(self):
+    """Devuelve los datos del jugador en un formato legible de MongoDB."""
+    return{
+      "id_player": self.id_player,
+      "power": self.power,
+      "ambition": self.ambition,
+      "leadership": self.leadership,
+      "exp": self.exp,
+      "speed": self.speed,
+      "jump": self.jump,
+      "endurance": self.endurance,
+      "level": self.level,
+      "marking": self.marking,
+      "rebound": self.rebound,
+      "block": self.block,
+      "recover": self.recover,
+      "two": self.two,
+      "three": self.three,
+      "free": self.free,
+      "assist": self.assist,
+      "dribbling": self.dribbling,
+      "dunk": self.dunk,
+      "fight": self.fight,
+      "mental": self.mental,
+      "physic": self.physic,
+      "defense": self.defense,
+      "offense": self.offense,
+      "total": self.total,
+      "_date": datetime.datetime.now()
+    }
