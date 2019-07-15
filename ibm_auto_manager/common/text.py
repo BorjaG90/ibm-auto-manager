@@ -37,7 +37,18 @@ def date_translation(html_content):
   # Remove the hour
   html_content = html_content.replace(re.search(
     r'\s\d{1,2}:\d{1,2}', html_content).group(0), '')
-  if(re.search(reg_month, html_content) is not None):
+
+  if re.search("Hoy", html_content) is not None:
+    # print("Hoy")
+    return '{}/{}/{}'.format(str(datetime.datetime.now().day).zfill(2), \
+      str(datetime.datetime.now().month).zfill(2), datetime.datetime.now().year)
+
+  elif re.search("Ayer", html_content) is not None:
+    # print("Ayer")
+    return '{}/{}/{}'.format(str(datetime.datetime.now().day -1).zfill(2), \
+      str(datetime.datetime.now().month).zfill(2), datetime.datetime.now().year)
+
+  elif re.search(reg_month, html_content) is not None:
     day = re.search(r'\d{1,2}', html_content).group(0).replace(' ', '')
     month_str = re.search(reg_month, html_content).group(0)
     if(month_str == 'Ene'):
@@ -69,7 +80,8 @@ def date_translation(html_content):
     else:
       year = datetime.datetime.now().year
     return '{}/{}/{}'.format(str(day).zfill(2), str(month).zfill(2), year)
-  elif(re.search(reg_day, html_content) is not None):
+
+  elif re.search(reg_day, html_content) is not None:
     day = re.search(r'\d{1,2}', html_content).group(0).replace(' ', '')
     if(int(day) < datetime.datetime.now().day):
       if(datetime.datetime.now().month == 1):
@@ -83,6 +95,7 @@ def date_translation(html_content):
     else:
       year = datetime.datetime.now().year
     return '{}/{}/{}'.format(str(day).zfill(2), str(month).zfill(2), year)
+    
   else:
     pass
     # print(html_content)

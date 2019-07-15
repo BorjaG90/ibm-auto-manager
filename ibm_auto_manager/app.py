@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from ibm_auto_manager.common.util import cls, show
-from ibm_auto_manager.scout import market
+from ibm_auto_manager.scout import market_page
 
 # ----- Functions -----
 def config():
@@ -155,7 +155,7 @@ def run(arg=""):
     """ Ejecución exclusiva del analísis de mercado """
     print("********IBM Auto Manager**********")
     print("\nAnalizando mercado")
-    market.enter_market(connection["auth"], connection["db"])
+    market_page.enter_market(connection["auth"], connection["db"])
   if arg == "":
     """ Ejecución normal """
     # Menu
@@ -169,7 +169,7 @@ def run(arg=""):
       opcion = input("Introduce una opción: > ")
 
       if opcion == "m":
-        market.enter_market(connection["auth"], connection["db"])
+        market_page.enter_market(connection["auth"], connection["db"])
 
       elif opcion == "0":
         print("Cerrando programa!")
