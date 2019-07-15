@@ -5,9 +5,10 @@ __email__ = 'borjagete90@outlook.es'
 
 from bs4 import BeautifulSoup
 
+from ibm_auto_manager.common import text
 from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.connection.login_page import login
-from ibm_auto_manager.common import text
+from ibm_auto_manager.scout import player_page
 
 from ..scout import auction
 
@@ -77,15 +78,15 @@ def analyze_market_page(auth, params, db):
   for v_auction in auctions:
     # print("\t{}".format(auction))
     # Realizamos un analisis profundo de cada jugador
-    #player = player_page.get_player_data(v_auction.id_player, auth)
+    player = player_page.get_player_data(v_auction.id_player, auth)
     # Esto es una tupla
-    #similars = player_page.get_similar_data(v_auction.id_player, auth)
+    similars = player_page.get_similar_data(v_auction.id_player, auth)
     # print(similars)
     # Insertamos la subasta
     db.market.insert_one(v_auction.to_db_collection())
 
-    # player_page.insert_player(player, v_auction.id_player, db)
-    # player_page.insert_similars(similars, db)
+    player_page.insert_player(player, v_auction.id_player, db)
+    player_page.insert_similars(similars, db)
 
 
 def get_auctions(html_content):
