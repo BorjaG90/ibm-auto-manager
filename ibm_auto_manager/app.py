@@ -141,13 +141,13 @@ def run(arg=""):
   connection = connect()
 
   if arg == "--market" or arg== "-m" or arg== "market":
-    """ Ejecución exclusiva del analísis de mercado """
+    """ Ejecución exclusiva del análisis de mercado """
     print("********IBM Auto Manager**********")
     print("\nAnalizando mercado")
     market_page.enter_market(connection["auth"], connection["db"])
 
   elif arg == "--profile" or arg== "-p" or arg== "profile":
-    """ Ejecución exclusiva del analísis del perfil """
+    """ Ejecución exclusiva del análisis del perfil """
     print("********IBM Auto Manager**********")
     print("\nAnalizando perfil")
     dashboard_page.get_profile_data(connection["auth"], connection["db"])
