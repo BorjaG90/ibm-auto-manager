@@ -15,7 +15,9 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from ibm_auto_manager.common.util import cls, show
+from ibm_auto_manager.general import dashboard_page
 from ibm_auto_manager.scout import market_page
+from ibm_auto_manager.trainer import team_page
 
 # ----- Functions -----
 def config():
@@ -132,18 +134,6 @@ def connect():
   return connection
 
 
-# def save_profile(db, money):
-#   db.profile.delete_many({})
-#   pf = profile.Profile(1, money)
-#   db.profile.insert_one(pf.to_db_collection())
-
-#   if (db.profile.find_one({"id": 1}) is not None):
-#     pfe = db.profile.find_one({"id": 1})
-#     print(pfe)
-#   else:
-#     print("Error")
-  
-
 # =====================
 #     -- Start --
 # =====================
@@ -152,11 +142,20 @@ def run(arg=""):
   connection = connect()
 
   if arg == "--market" or arg== "-m" or arg== "market":
-    """ Ejecución exclusiva del analísis de mercado """
+    """ Ejecución exclusiva del análisis de mercado """
     print("********IBM Auto Manager**********")
     print("\nAnalizando mercado")
     market_page.enter_market(connection["auth"], connection["db"])
-  if arg == "":
+
+  elif arg == "--profile" or arg== "-p" or arg== "profile":
+    """ Ejecución exclusiva del análisis del perfil """
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando perfil")
+    id_team = dashboard_page.get_profile_data
+    (connection["auth"], connection["db"])
+    team_page.enter_team(connection["auth"], connection["db"], id_team)
+
+  elif arg == "":
     """ Ejecución normal """
     # Menu
     while True:
@@ -164,12 +163,19 @@ def run(arg=""):
 
       print("********IBM Auto Manager**********")
       print("\n[m] Analizar mercado")
+      print("\n[p] Analizar perfil") # Provisional
       print("\n[0] Salir del programa\n")
 
       opcion = input("Introduce una opción: > ")
 
       if opcion == "m":
         market_page.enter_market(connection["auth"], connection["db"])
+      
+      if opcion == "p":
+
+        id_team = int(dashboard_page.get_profile_data(
+          connection["auth"], connection["db"]))
+        team_page.enter_team(connection["auth"], connection["db"], id_team)
 
       elif opcion == "0":
         print("Cerrando programa!")
@@ -181,7 +187,8 @@ def run(arg=""):
 
       input("\nPulse para continuar...")
 
-    input("Pulse para salir...")
-    cls()
   else:
     print("No se reconoce este comando")
+
+  input("Pulse para salir...")
+  cls()

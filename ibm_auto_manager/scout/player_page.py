@@ -26,8 +26,8 @@ def get_player_data(id_player, auth):
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
-  player_url = 'http://es.ibasketmanager.com/'
-  player_url = player_url + 'jugador.php?id_jugador=' + str(id_player)
+  player_url = "http://es.ibasketmanager.com/" + \
+    "jugador.php?id_jugador=" + str(id_player)
   # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
@@ -52,7 +52,7 @@ def analyze_player_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   
   # Datos
-  name = soup.find('div', {"class": "barrajugador"})
+  name = soup.find("div", {"class": "barrajugador"})
   if name is not None:  # El jugador está en medio de un partido
     name = name.text.strip()
     name = str(re.search(r'[A-ZÁÉÍÓÚ][\w\W]+', name).group(0))
@@ -63,9 +63,9 @@ def analyze_player_page(id_player, html_content):
     else:
       juvenil = False
     name = name.strip()
-    caja50 = soup.find_all('div', {"class": "caja50"})
-    data0 = caja50[0].find_all('td')
-    data1 = caja50[1].find_all('td')
+    caja50 = soup.find_all("div", {"class": "caja50"})
+    data0 = caja50[0].find_all("td")
+    data1 = caja50[1].find_all("td")
 
     position = data0[1].text
     age = str(re.search(r'[\d]+', data0[3].text).group(0)).strip()
@@ -86,7 +86,7 @@ def analyze_player_page(id_player, html_content):
     country = data1[9].text.strip()
 
     # Atributos
-    bars = soup.find_all('div', {"class": "jugbarranum"})
+    bars = soup.find_all("div", {"class": "jugbarranum"})
 
     # print("---Atributos---")
     power = bars[0].text
@@ -113,9 +113,9 @@ def analyze_player_page(id_player, html_content):
     #   print(str(t.text))
 
     # print("--Medias--")
-    caja5b = soup.find('div', {"class": "caja5b"})
-    mrx = caja5b.find('div', {"class": "mrx"}).find_all(
-      'td', {"class": "rojo"})
+    caja5b = soup.find("div", {"class": "caja5b"})
+    mrx = caja5b.find("div", {"class": "mrx"}).find_all(
+      "td", {"class": "rojo"})
     mental = mrx[0].text.replace('.', '').strip()
     physic = mrx[1].text.replace('.', '').strip()
     defense = mrx[2].text.replace('.', '').strip()
@@ -152,20 +152,25 @@ def insert_player(player, player_id, db):
     # print(str(player_id)  + ' - '+ str(player[0].id_player))
     # print(db.players.find_one({"id_player": player_id}))
     if (db.players.find_one({"id_player": int(player_id)}) is not None):
-      # print('Actualizar P:  ' + str(player[0]))
+      # print(show("player") + "    Actualizar P:  " + str(player[0]))
       db.players.replace_one(
-        {"id_player": int(player_id)}, player[0].to_db_collection())
+        {"id_player": int(player_id)}, 
+        player[0].to_db_collection()
+      )
     else:
-      # print('Insertar P:  ' + str(player[0]))
+      # print(show("player") + "    Insertar P:  " + str(player[0]))
       db.players.insert_one(player[0].to_db_collection())
 
-    if (db.players_attr.find_one({"id_player":
-                                int(player_id)}) is not None):
-      # print('Actualizar PA ' + str(player[1]))
+    if (db.players_attr.find_one(
+      {"id_player":int(player_id)}
+      ) is not None):
+      # print(show("player") + "    Actualizar PA: " + str(player[1]))
       db.players_attr.replace_one(
-        {"id_player": int(player_id)}, player[1].to_db_collection())
+        {"id_player": int(player_id)}, 
+        player[1].to_db_collection()
+      )
     else:
-      # print('Insertar PA ' + str(player[1]))
+      # print(show("player") + "    Insertar PA: " + str(player[1]))
       db.players_attr.insert_one(player[1].to_db_collection())
 
 
@@ -182,8 +187,8 @@ def get_similar_data(id_player, auth, register_date=None):
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
-  player_url = 'http://es.ibasketmanager.com/jugador_compras_similares.php?'
-  player_url = player_url + 'id_jugador=' + str(id_player)
+  player_url = "http://es.ibasketmanager.com/jugador_compras_similares.php?" + \
+     "id_jugador=" + str(id_player)
   # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
@@ -207,9 +212,9 @@ def analyze_similar_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   # Datos
   transactions = []
-  final = soup.find('div', {'class': 'texto final'})
+  final = soup.find("div", {'class': 'texto final'})
   # print(final)
-  mensaje = soup.find('div', {"id": "menserror"})  # Playing a game
+  mensaje = soup.find("div", {"id": "menserror"})  # Playing a game
   # print(mensaje)
   if(final is None and mensaje is None):
     # If there is auctions with that filter
@@ -219,9 +224,9 @@ def analyze_similar_page(id_player, html_content):
 
     for player_str in players_str:
       player_soup = BeautifulSoup(str(player_str), 'html.parser')
-      data_player = player_soup.find_all('td')
+      data_player = player_soup.find_all("td")
       name = str(data_player[0].find('a').text)
-      id_date_buy = data_player[1].find('div').text
+      id_date_buy = data_player[1].find("div").text
       date_buy = text.date_translation(
           data_player[1].text.replace(id_date_buy, '').strip())
       age = data_player[2].text

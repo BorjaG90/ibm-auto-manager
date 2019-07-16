@@ -58,12 +58,12 @@ def analyze_market_page(auth, params, db):
 
   session = login(auth)
 
-  market_url = 'http://es.ibasketmanager.com/mercado.php'
-  market_url = market_url + '?juvenil=' + str(params["juvenil"])
+  market_url = "http://es.ibasketmanager.com/mercado.php"
+  market_url = market_url + "?juvenil=" + str(params["juvenil"])
   market_url = market_url + "&tiempos=" + str(params["tiempos"])
   market_url = market_url + "&posiciones=" + str(params["posiciones"])
   market_url = market_url + "&calidad=" + str(params["calidad"])
-  market_url = market_url + '&edad' + str(params["edad"])
+  market_url = market_url + "&edad" + str(params["edad"])
   market_url = market_url + "&cdirecta=" + str(params["cdirecta"])
   print(show("market") + ">{ " + market_url + " }")
 
@@ -95,19 +95,19 @@ def get_auctions(html_content):
         en formato String.
     """
 
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, "html.parser")
     auctions = []
-    final = soup.find('div', {'class': 'texto final'})
+    final = soup.find("div", {"class": "texto final"})
     if(final is None):  # If there is auctions with that filter
       players_str = soup.find_all(
-        'table', {"id": "pagetabla"})[0].find_all('tr')
+        "table", {"id": "pagetabla"})[0].find_all("tr")
       players_str.pop(0)
       # print(players_str)
 
       for player_str in players_str:
-        player_soup = BeautifulSoup(str(player_str), 'html.parser')
-        data_player = player_soup.find_all('td')
-        url = str(data_player[1].find('a')['href']).split('id_jugador=')[1]
+        player_soup = BeautifulSoup(str(player_str), "html.parser")
+        data_player = player_soup.find_all("td")
+        url = str(data_player[1].find("a")["href"]).split("id_jugador=")[1]
         pos = str(data_player[2].text)[3:5:1]
         avg = str(data_player[3].text)
         age = str(data_player[4].text)

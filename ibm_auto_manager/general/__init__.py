@@ -3,4 +3,4 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
-__all__ = ["profile"]
+__all__ = ["dashboard_page"]
