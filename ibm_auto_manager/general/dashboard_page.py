@@ -12,6 +12,7 @@ from ibm_auto_manager.general import profile
 
 def get_profile_data(auth, db):
   """ Obtenemos los datos del perfil del usuario actual
+    Devolvemos el id del equipo
 
   Keyword arguments:
     auth -- Cadena de autenticacion a la web.
@@ -34,6 +35,8 @@ def get_profile_data(auth, db):
     db.profile.insert_one(v_profile.to_db_collection())
 
   print(show("profile") + " > Perfil actualizado")
+
+  return id_team
 
 
 def analyze_init(auth, db):

@@ -17,6 +17,7 @@ from pymongo import MongoClient
 from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.general import dashboard_page
 from ibm_auto_manager.scout import market_page
+from ibm_auto_manager.trainer import team_page
 
 # ----- Functions -----
 def config():
@@ -150,7 +151,9 @@ def run(arg=""):
     """ Ejecución exclusiva del análisis del perfil """
     print("********IBM Auto Manager**********")
     print("\nAnalizando perfil")
-    dashboard_page.get_profile_data(connection["auth"], connection["db"])
+    id_team = dashboard_page.get_profile_data
+    (connection["auth"], connection["db"])
+    team_page.enter_team(connection["auth"], connection["db"], id_team)
 
   elif arg == "":
     """ Ejecución normal """
@@ -169,7 +172,10 @@ def run(arg=""):
         market_page.enter_market(connection["auth"], connection["db"])
       
       if opcion == "p":
-        dashboard_page.get_profile_data(connection["auth"], connection["db"])
+
+        id_team = int(dashboard_page.get_profile_data(
+          connection["auth"], connection["db"]))
+        team_page.enter_team(connection["auth"], connection["db"], id_team)
 
       elif opcion == "0":
         print("Cerrando programa!")
@@ -181,7 +187,8 @@ def run(arg=""):
 
       input("\nPulse para continuar...")
 
-    input("Pulse para salir...")
-    cls()
   else:
     print("No se reconoce este comando")
+
+  input("Pulse para salir...")
+  cls()
