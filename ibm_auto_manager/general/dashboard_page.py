@@ -18,15 +18,40 @@ def get_profile_data(auth, db):
     db -- Objeto de conexion a la BD.
   """
 
+  id_team, user, team, money, color_prim, color_sec = analyze_init(auth, db)
+  id_user, seats, fans, ranking, streak = analyze_team_page(auth, db, id_team)
+
+  
+  v_profile = profile.Profile(
+    id_user, user, id_team, team, money, color_prim, 
+    color_sec, seats, fans, ranking, streak
+  )
+
+  if (db.profile.find_one({"id": int(id_team)}) is not None):
+    db.profile.replace_one(
+      {"id": int(id_team)}, v_profile.to_db_collection())
+  else:
+    db.profile.insert_one(v_profile.to_db_collection())
+
+  print(show("profile") + " > Perfil actualizado")
+
+
+def analyze_init(auth, db):
+  """ Analizamos la pagina de inicio
+
+  Keyword arguments:
+    auth -- Cadena de autenticacion a la web.
+    db -- Objeto de conexion a la BD.
+  """
   session = login(auth)
 
-  url = 'http://es.ibasketmanager.com/inicio.php'
+  url = "http://es.ibasketmanager.com/inicio.php"
   r = session.get(url)
   load_status = 0
   while load_status != 200:
     load_status = r.status_code
   
-  print(show("profile") + " > Analizando perfil")
+  print(show("profile") + " > Analizando perfil inicial")
 
   soup = BeautifulSoup(r.content, "html.parser")
   a = soup.find_all("a", {"class": "color_skin"})
@@ -38,13 +63,36 @@ def get_profile_data(auth, db):
   id_team = a[2]["href"].split("=")[1].strip()
   team_name = a[2].text.strip()
   money = a[3].text.replace('€','').replace('.','').strip()
-  v_profile = profile.Profile(
-    id_team, username, team_name, money, color_prim, color_sec)
 
-  if (db.profile.find_one({"id": int(id_team)}) is not None):
-    db.profile.replace_one(
-      {"id": int(id_team)}, v_profile.to_db_collection())
-  else:
-    db.profile.insert_one(v_profile.to_db_collection())
+  return [id_team, username, team_name, money, color_prim, color_sec]
 
-  print(show("profile") + " > Perfil actualizado")
+def analyze_team_page(auth, db, id_team):
+  """ Analizamos la pagina del equipo
+
+  Keyword arguments:
+    auth -- Cadena de autenticacion a la web.
+    db -- Objeto de conexion a la BD.
+  """
+  session = login(auth)
+
+  url = "http://es.ibasketmanager.com/equipo.php?id=" + id_team
+  r = session.get(url)
+  load_status = 0
+  while load_status != 200:
+    load_status = r.status_code
+  
+  print(show("profile") + " > Analizando perfil del equipo")
+
+  soup = BeautifulSoup(r.content, "html.parser")
+  
+  trs2 = soup.find_all("tr", {"class": "tipo2"})
+
+  id_user = trs2[0].find("a")["href"].split("=")[1]
+  streak = trs2[2].find_all("td")[1].text
+  club_seats = trs2[3].find_all("td")[1].text.replace(".","").strip()
+  ranking = trs2[4].find_all("td")[1].text.replace("Ranking","").strip()
+  
+  trs1 = soup.find_all("tr", {"class": "tipo1"})
+  fans = trs1[3].find_all("td")[1].text.replace(".","").strip()
+
+  return [id_user, club_seats, fans, ranking, streak]

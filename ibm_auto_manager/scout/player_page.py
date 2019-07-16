@@ -26,8 +26,8 @@ def get_player_data(id_player, auth):
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
-  player_url = 'http://es.ibasketmanager.com/'
-  player_url = player_url + 'jugador.php?id_jugador=' + str(id_player)
+  player_url = "http://es.ibasketmanager.com/" + \
+    "jugador.php?id_jugador=" + str(id_player)
   # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
@@ -152,20 +152,25 @@ def insert_player(player, player_id, db):
     # print(str(player_id)  + ' - '+ str(player[0].id_player))
     # print(db.players.find_one({"id_player": player_id}))
     if (db.players.find_one({"id_player": int(player_id)}) is not None):
-      # print('Actualizar P:  ' + str(player[0]))
+      # print(show("player") + "    Actualizar P:  " + str(player[0]))
       db.players.replace_one(
-        {"id_player": int(player_id)}, player[0].to_db_collection())
+        {"id_player": int(player_id)}, 
+        player[0].to_db_collection()
+      )
     else:
-      # print('Insertar P:  ' + str(player[0]))
+      # print(show("player") + "    Insertar P:  " + str(player[0]))
       db.players.insert_one(player[0].to_db_collection())
 
-    if (db.players_attr.find_one({"id_player":
-                                int(player_id)}) is not None):
-      # print('Actualizar PA ' + str(player[1]))
+    if (db.players_attr.find_one(
+      {"id_player":int(player_id)}
+      ) is not None):
+      # print(show("player") + "    Actualizar PA: " + str(player[1]))
       db.players_attr.replace_one(
-        {"id_player": int(player_id)}, player[1].to_db_collection())
+        {"id_player": int(player_id)}, 
+        player[1].to_db_collection()
+      )
     else:
-      # print('Insertar PA ' + str(player[1]))
+      # print(show("player") + "    Insertar PA: " + str(player[1]))
       db.players_attr.insert_one(player[1].to_db_collection())
 
 
@@ -182,8 +187,8 @@ def get_similar_data(id_player, auth, register_date=None):
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
-  player_url = 'http://es.ibasketmanager.com/jugador_compras_similares.php?'
-  player_url = player_url + 'id_jugador=' + str(id_player)
+  player_url = "http://es.ibasketmanager.com/jugador_compras_similares.php?" + \
+     "id_jugador=" + str(id_player)
   # print(show("player") + " >{ " + player_url + " }")
   r = session.get(player_url)
   load_status = 0
