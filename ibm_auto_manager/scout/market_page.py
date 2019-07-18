@@ -18,7 +18,7 @@ def enter_market(auth, db):
     db -- Objeto de conexion a la BD.
   """
 
-  db.market.delete_many({})
+  db.auctions.delete_many({})
   print(show("market") + " > Mercado previo eliminado")
 
   params = {
@@ -81,7 +81,7 @@ def analyze_market_page(auth, params, db):
     similars = player_page.get_similar_data(v_auction.id_player, auth)
     # print(similars)
     # Insertamos la subasta
-    db.market.insert_one(v_auction.to_db_collection())
+    db.auctions.insert_one(v_auction.to_db_collection())
 
     player_page.insert_player(player, v_auction.id_player, db)
     player_page.insert_similars(similars, db)

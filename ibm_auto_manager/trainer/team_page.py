@@ -36,7 +36,7 @@ def enter_team(auth, db, own_team_id):
 
     player_page.insert_player(player, player_id, db)
 
-    db.players_progression.insert_one(player[1].to_db_collection())
+    db.players_progressions.insert_one(player[1].to_db_collection())
 
   # Juniors
   print(show("juniors") + "   -> Cantera:   " + str(own_team_id))
@@ -46,4 +46,4 @@ def enter_team(auth, db, own_team_id):
 
     player_page.insert_player(junior, junior_id, db)
 
-    db.players_progression.insert_one(player[1].to_db_collection())
+    db.players_progressions.insert_one(player[1].to_db_collection())
