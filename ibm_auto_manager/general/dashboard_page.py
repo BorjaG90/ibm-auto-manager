@@ -28,11 +28,11 @@ def get_profile_data(auth, db):
     color_sec, seats, fans, ranking, streak
   )
 
-  if (db.profile.find_one({"id": int(id_team)}) is not None):
-    db.profile.replace_one(
+  if (db.profiles.find_one({"id": int(id_team)}) is not None):
+    db.profiles.replace_one(
       {"id": int(id_team)}, v_profile.to_db_collection())
   else:
-    db.profile.insert_one(v_profile.to_db_collection())
+    db.profiles.insert_one(v_profile.to_db_collection())
 
   print(show("profile") + " > Perfil actualizado")
 
