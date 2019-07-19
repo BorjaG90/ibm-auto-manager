@@ -4,7 +4,6 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 from datetime import datetime
-from bson import ObjectId
 
 
 class Profile:
@@ -22,9 +21,9 @@ class Profile:
               streak, # racha de partidos
 
               ):
-    self.user_id = ObjectId(id_user)
+    self.user_id = int(id_user)
     self.username = str(username)
-    self.team_id = ObjectId(id_team)
+    self.team_id = int(id_team)
     self.team_name = str(team_name)
     self.money = int(money)
     self.color_prim = str(color_prim)
@@ -48,5 +47,5 @@ class Profile:
       "fans": self.fans,
       "ranking_team": self.ranking_team,
       "streak": self.streak,
-      "_date": datetime.datetime.now()
+      "_date": datetime.now()
     }

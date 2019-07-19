@@ -147,8 +147,8 @@ def run(arg=""):
     """ Ejecución exclusiva del análisis del perfil """
     print("********IBM Auto Manager**********")
     print("\nAnalizando perfil")
-    id_team = dashboard_page.get_profile_data
-    (connection["auth"], connection["db"])
+    id_team = dashboard_page.get_profile_data(
+      connection["auth"], connection["db"])
     team_page.enter_team(connection["auth"], connection["db"], id_team)
 
   elif arg == "":
