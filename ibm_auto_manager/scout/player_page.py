@@ -151,27 +151,25 @@ def insert_player(player, player_id, db):
     # lo insertamos/actualizamos
     # print(str(player_id)  + ' - '+ str(player[0].id_player))
     # print(db.players.find_one({"id_player": player_id}))
-    if (db.players.find_one({"id_player": int(player_id)}) is not None):
+    if (db.players.find_one({"player_id": player_id}) is not None):
       # print(show("player") + "    Actualizar P:  " + str(player[0]))
       db.players.replace_one(
-        {"id_player": int(player_id)}, 
+        {"player_id": player_id}, 
         player[0].to_db_collection()
       )
     else:
       # print(show("player") + "    Insertar P:  " + str(player[0]))
       db.players.insert_one(player[0].to_db_collection())
 
-    if (db.players_attrs.find_one(
-      {"id_player":int(player_id)}
-      ) is not None):
+    if (db.attributes.find_one({"player_id": player_id}) is not None):
       # print(show("player") + "    Actualizar PA: " + str(player[1]))
-      db.players_attrs.replace_one(
-        {"id_player": int(player_id)}, 
+      db.attributes.replace_one(
+        {"player_id": player_id}, 
         player[1].to_db_collection()
       )
     else:
       # print(show("player") + "    Insertar PA: " + str(player[1]))
-      db.players_attrs.insert_one(player[1].to_db_collection())
+      db.attributes.insert_one(player[1].to_db_collection())
 
 
 def get_similar_data(id_player, auth, register_date=None):

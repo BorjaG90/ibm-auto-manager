@@ -3,7 +3,8 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
-import datetime
+from datetime import datetime
+from bson import ObjectId
 
 from ibm_auto_manager.common import text
 
@@ -35,8 +36,8 @@ class Transaction:
               salary=None,
               date_buy=None
               ):
-    self.id_player = int(id_player)
-    self.id_date_buy = int(id_date_buy)
+    self.player_id = ObjectId(id_player)
+    self.date_buy_id = ObjectId(id_date_buy)
     self.age = int(age)
     self.average = int(avg)
     self.position = pos
@@ -48,7 +49,7 @@ class Transaction:
   def __str__(self):
     return 'Id: {} {} de {} años, con {} de media\n\tVendido en {} por {}€\
     , cobrando {}€ en la fecha {},{}'.format(
-      self.id_player,
+      self.player_id,
       self.position,
       self.age,
       self.average,
@@ -56,14 +57,14 @@ class Transaction:
       self.price,
       self.salary,
       self.date_buy,
-      self.id_date_buy
+      self.date_buy_id
     )
 
   def to_db_collection(self):
     """Devuelve los datos del jugador en un formato legible de MongoDB."""
     return {
-      "id_player": self.id_player,
-      "id_date_buy": self.id_date_buy,
+      "player_id": self.player_id,
+      "date_buy_id": self.date_buy_id,
       "age": self.age,
       "average": self.average,
       "position": text.pos_treatment(self.position),
@@ -71,5 +72,5 @@ class Transaction:
       "salary": self.salary,
       "type_buy": self.type_buy,
       "date_buy": self.date_buy,
-      "_date": datetime.datetime.now()
+      "_date": datetime.now()
     }

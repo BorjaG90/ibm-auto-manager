@@ -3,7 +3,8 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
-import datetime
+from datetime import datetime
+from bson import ObjectId
 
 
 class Profile:
@@ -21,9 +22,9 @@ class Profile:
               streak, # racha de partidos
 
               ):
-    self.id_user = int(id_user)
+    self.user_id = ObjectId(id_user)
     self.username = str(username)
-    self.id_team = int(id_team)
+    self.team_id = ObjectId(id_team)
     self.team_name = str(team_name)
     self.money = int(money)
     self.color_prim = str(color_prim)
@@ -36,9 +37,9 @@ class Profile:
   def to_db_collection(self):
     """Devuelve los datos del perfil en un formato legible de MongoDB."""
     return {
-      "id_user": self.id_user,
+      "user_id": self.user_id,
       "username": self.username,
-      "id_team":self.id_team,
+      "team_id":self.team_id,
       "team_name": self.team_name,
       "money": self.money,
       "color_prim": self.color_prim,

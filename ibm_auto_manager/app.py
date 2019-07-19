@@ -25,10 +25,10 @@ def config():
     En caso de que no exista, solictamos los datos necesarios y lo creamos."""
   
   settings = {}
-  if os.path.isfile('./ibm_auto_manager/config/settings.json'):
+  if os.path.isfile("./ibm_auto_manager/config/settings.json"):
     print(show("config") + "Encontrado fichero configuración")
 
-    with open("./ibm_auto_manager/config/settings.json", "r") as settings_file:
+    with open("./ibm_auto_manager/config/settings.json", 'r') as settings_file:
       settings = json.load(settings_file)
     settings_file.close
 
@@ -125,11 +125,7 @@ def connect():
   mongoClient = MongoClient(settings["mongodb"])
   db = mongoClient['ibm-auto-manager']
 
-  connection = {
-    "settings": settings,
-    "auth": auth,
-    "db": db
-  }
+  connection = {"settings": settings, "auth": auth, "db": db }
 
   return connection
 

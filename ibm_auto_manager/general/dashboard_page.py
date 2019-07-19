@@ -28,9 +28,9 @@ def get_profile_data(auth, db):
     color_sec, seats, fans, ranking, streak
   )
 
-  if (db.profiles.find_one({"id": int(id_team)}) is not None):
+  if (db.profiles.find_one({"team_id": int(id_team)}) is not None):
     db.profiles.replace_one(
-      {"id": int(id_team)}, v_profile.to_db_collection())
+      {"team_id": int(id_team)}, v_profile.to_db_collection())
   else:
     db.profiles.insert_one(v_profile.to_db_collection())
 
