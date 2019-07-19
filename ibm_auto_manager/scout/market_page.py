@@ -76,14 +76,14 @@ def analyze_market_page(auth, params, db):
   for v_auction in auctions:
     # print("\t{}".format(auction))
     # Realizamos un analisis profundo de cada jugador
-    player = player_page.get_player_data(v_auction.id_player, auth)
+    player = player_page.get_player_data(v_auction.player_id, auth)
     # Esto es una tupla
-    similars = player_page.get_similar_data(v_auction.id_player, auth)
+    similars = player_page.get_similar_data(v_auction.player_id, auth)
     # print(similars)
     # Insertamos la subasta
     db.auctions.insert_one(v_auction.to_db_collection())
 
-    player_page.insert_player(player, v_auction.id_player, db)
+    player_page.insert_player(player, v_auction.player_id, db)
     player_page.insert_similars(similars, db)
 
 

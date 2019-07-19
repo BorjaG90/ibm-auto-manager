@@ -3,7 +3,8 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
-import datetime
+from datetime import datetime
+from bson import ObjectId
 
 from ibm_auto_manager.common import text
 
@@ -26,7 +27,7 @@ class Player:
                 juvenil,
                 country
                 ):
-    self.id_player = int(id_player)
+    self.player_id = int(id_player)
     self.team_id = int(team_id)
     self.name = name
     self.position = position
@@ -52,7 +53,7 @@ class Player:
   def to_db_collection(self):
     """Devuelve los datos del jugador en un formato legible de MongoDB."""
     return {
-      "id_player": self.id_player,
+      "player_id": self.player_id,
       "team_id": self.team_id,
       "name": self.name,
       "position": text.pos_treatment(self.position),
@@ -65,7 +66,7 @@ class Player:
       "years": self.years,
       "juvenil": self.juvenil,
       "country": self.country,
-      "_date": datetime.datetime.now()
+      "_date": datetime.now()
     }
 
 class PlayerAtributes:
@@ -98,7 +99,7 @@ class PlayerAtributes:
               offense,
               total
               ):
-    self.id_player = int(id_player)
+    self.player_id = int(id_player)
     self.power = int(power)
     self.ambition = int(ambition)
     self.leadership = int(leadership)
@@ -127,7 +128,7 @@ class PlayerAtributes:
   def __str__(self):
     return "Id: {}, medias -> Tot: {}, Off: {}, Def: {}, \
     Mnt: {}, Fis: {}".format(
-      self.id_player,
+      self.player_id,
       self.total / 100,
       self.offense / 100,
       self.defense / 100,
@@ -138,7 +139,7 @@ class PlayerAtributes:
   def to_db_collection(self):
     """Devuelve los datos del jugador en un formato legible de MongoDB."""
     return{
-      "id_player": self.id_player,
+      "player_id": self.player_id,
       "power": self.power,
       "ambition": self.ambition,
       "leadership": self.leadership,
@@ -163,5 +164,5 @@ class PlayerAtributes:
       "defense": self.defense,
       "offense": self.offense,
       "total": self.total,
-      "_date": datetime.datetime.now()
+      "_date": datetime.now()
     }
