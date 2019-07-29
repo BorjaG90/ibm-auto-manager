@@ -4,6 +4,7 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 from bs4 import BeautifulSoup
+from bson import ObjectId
 
 from ibm_auto_manager.common.util import show
 from ibm_auto_manager.connection.login_page import login
@@ -28,9 +29,9 @@ def get_profile_data(auth, db):
     color_sec, seats, fans, ranking, streak
   )
 
-  if (db.profiles.find_one({"team_id": int(id_team)}) is not None):
+  if (db.profiles.find_one({"team_id": ObjectId(id_team.zfill(24))}) is not None):
     db.profiles.replace_one(
-      {"team_id": int(id_team)}, v_profile.to_db_collection())
+      {"team_id": ObjectId(id_team.zfill(24))}, v_profile.to_db_collection())
   else:
     db.profiles.insert_one(v_profile.to_db_collection())
 

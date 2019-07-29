@@ -4,6 +4,7 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 from datetime import datetime
+from bson import ObjectId
 
 from ibm_auto_manager.common import text
 
@@ -19,7 +20,7 @@ class Auction:
 							date_auction,
 							offer
 							):
-		self.player_id = int(id_player)
+		self._id = ObjectId(id_player.zfill(24))
 		self.position = pos
 		self.average = int(avg)
 		self.age = int(age)
@@ -29,7 +30,7 @@ class Auction:
 	def __str__(self):
 		return "Id: {}, {} de {} años y {} de media,\
 		hasta el {} por {}€".format(
-			self.player_id,
+			self._id,
 			self.position,
 			self.age,
 			self.average,
@@ -40,7 +41,7 @@ class Auction:
 	def to_db_collection(self):
 		"""Devuelve el dato de la subasta en un formato legible de MongoDB."""
 		return {
-			"player_id": self.player_id,
+			"_id": self._id,
 			"position": text.pos_treatment(self.position),
 			"age": self.age,
 			"average": self.average,
