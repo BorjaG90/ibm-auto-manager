@@ -36,8 +36,8 @@ class Transaction:
               salary=None,
               date_buy=None
               ):
-    self.player_id = ObjectId(id_player)
-    self.date_buy_id = ObjectId(id_date_buy)
+    self.player_id = ObjectId(id_player.zfill(24))
+    self._id = ObjectId(id_date_buy.zfill(24))
     self.age = int(age)
     self.average = int(avg)
     self.position = pos
@@ -57,14 +57,14 @@ class Transaction:
       self.price,
       self.salary,
       self.date_buy,
-      self.date_buy_id
+      self._id
     )
 
   def to_db_collection(self):
     """Devuelve los datos del jugador en un formato legible de MongoDB."""
     return {
+      "_id": self._id,
       "player_id": self.player_id,
-      "date_buy_id": self.date_buy_id,
       "age": self.age,
       "average": self.average,
       "position": text.pos_treatment(self.position),

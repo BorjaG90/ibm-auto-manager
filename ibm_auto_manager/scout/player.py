@@ -27,8 +27,8 @@ class Player:
                 juvenil,
                 country
                 ):
-    self.player_id = int(id_player)
-    self.team_id = int(team_id)
+    self._id = ObjectId(id_player.zfill(24))
+    self.team_id = ObjectId(team_id.zfill(24))
     self.name = name
     self.position = position
     self.age = int(age)
@@ -44,7 +44,7 @@ class Player:
   def __str__(self):
     return "{} con Id: {}, {} de {} años de {}".format(
       self.name,
-      self.id_player,
+      self._id,
       self.position,
       self.age,
       self.country
@@ -53,7 +53,7 @@ class Player:
   def to_db_collection(self):
     """Devuelve los datos del jugador en un formato legible de MongoDB."""
     return {
-      "player_id": self.player_id,
+      "_id": self._id,
       "team_id": self.team_id,
       "name": self.name,
       "position": text.pos_treatment(self.position),
@@ -99,7 +99,7 @@ class PlayerAtributes:
               offense,
               total
               ):
-    self.player_id = int(id_player)
+    self.player_id = ObjectId(id_player.zfill(24))
     self.power = int(power)
     self.ambition = int(ambition)
     self.leadership = int(leadership)
@@ -137,7 +137,38 @@ class PlayerAtributes:
     )
 
   def to_db_collection(self):
-    """Devuelve los datos del jugador en un formato legible de MongoDB."""
+    """Devuelve los atributos del jugador en un formato legible de MongoDB."""
+    return{
+      "_id": self.player_id,
+      "power": self.power,
+      "ambition": self.ambition,
+      "leadership": self.leadership,
+      "exp": self.exp,
+      "speed": self.speed,
+      "jump": self.jump,
+      "endurance": self.endurance,
+      "level": self.level,
+      "marking": self.marking,
+      "rebound": self.rebound,
+      "block": self.block,
+      "recover": self.recover,
+      "two": self.two,
+      "three": self.three,
+      "free": self.free,
+      "assist": self.assist,
+      "dribbling": self.dribbling,
+      "dunk": self.dunk,
+      "fight": self.fight,
+      "mental": self.mental,
+      "physic": self.physic,
+      "defense": self.defense,
+      "offense": self.offense,
+      "total": self.total,
+      "_date": datetime.now()
+    }
+
+  def to_db_collection_prog(self):
+    """Devuelve la progresión del jugador en un formato legible de MongoDB."""
     return{
       "player_id": self.player_id,
       "power": self.power,

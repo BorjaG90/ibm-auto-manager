@@ -7,6 +7,7 @@ import re
 import time
 
 from bs4 import BeautifulSoup
+from bson import ObjectId
 
 from ibm_auto_manager.common import text
 from ibm_auto_manager.common.util import show
@@ -151,25 +152,25 @@ def insert_player(player, player_id, db):
     # lo insertamos/actualizamos
     # print(str(player_id)  + ' - '+ str(player[0].id_player))
     # print(db.players.find_one({"id_player": player_id}))
-    if (db.players.find_one({"player_id": player_id}) is not None):
+    if (db.players.find_one({"_id": ObjectId(player_id.zfill(24))}) is not None):
       # print(show("player") + "    Actualizar P:  " + str(player[0]))
       db.players.replace_one(
-        {"player_id": player_id}, 
+        {"_id": ObjectId(player_id.zfill(24))}, 
         player[0].to_db_collection()
       )
     else:
       # print(show("player") + "    Insertar P:  " + str(player[0]))
       db.players.insert_one(player[0].to_db_collection())
 
-    if (db.attributes.find_one({"player_id": player_id}) is not None):
+    if (db.players.find_one({"_id": ObjectId(player_id.zfill(24))}) is not None):
       # print(show("player") + "    Actualizar PA: " + str(player[1]))
-      db.attributes.replace_one(
-        {"player_id": player_id}, 
-        player[1].to_db_collection()
+      db.players.update_one(
+        {"_id": ObjectId(player_id.zfill(24))}, 
+        {'$set': player[1].to_db_collection()}
       )
     else:
       # print(show("player") + "    Insertar PA: " + str(player[1]))
-      db.attributes.insert_one(player[1].to_db_collection())
+      db.players.insert_one(player[1].to_db_collection())
 
 
 def get_similar_data(id_player, auth, register_date=None):
@@ -266,13 +267,13 @@ def insert_similars(similars, db):
   """
   for similar in similars:
     if(db.transactions.find(
-      {"id_player": similar.id_player},
-      {"id_date_buy": similar.id_date_buy}
+      {"id_player": ObjectId(similar.id_player.zfill(24))},
+      {"_id": ObjectId(similar.id_date_buy.zfill(24))}
     ).count() == 0):
       db.transactions.insert_one(similar.to_db_collection())
     else:
       # print("\t-Ya existe-")
       db.transactions.replace_one(
-        {"$and": [{"id_player": similar.id_player},
-                  {"id_date_buy": similar.id_date_buy}]},
+        {"$and": [{"id_player": ObjectId(similar.id_player.zfill(24))},
+                  {"_id": ObjectId(similar.id_date_buy.zfill(24))}]},
         similar.to_db_collection())
