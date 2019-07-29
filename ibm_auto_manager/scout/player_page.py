@@ -266,14 +266,17 @@ def insert_similars(similars, db):
     db -- Objeto de conexion a la BD.
   """
   for similar in similars:
+    id_player = str(int(str(similar.player_id)))
+    id_similar = str(int(str(similar.date_buy_id)))
     if(db.transactions.find(
-      {"id_player": ObjectId(similar.id_player.zfill(24))},
-      {"_id": ObjectId(similar.id_date_buy.zfill(24))}
+      {"id_player": ObjectId(id_player.zfill(24))},
+      {"date_buy_id": ObjectId(id_similar.zfill(24))}
     ).count() == 0):
       db.transactions.insert_one(similar.to_db_collection())
     else:
+      pass
       # print("\t-Ya existe-")
-      db.transactions.replace_one(
-        {"$and": [{"id_player": ObjectId(similar.id_player.zfill(24))},
-                  {"_id": ObjectId(similar.id_date_buy.zfill(24))}]},
-        similar.to_db_collection())
+      # db.transactions.replace_one(
+      #  {"$and": [{"id_player": ObjectId(id_player.zfill(24))},
+      #            {"date_buy_id": ObjectId(id_similar.zfill(24))}]},
+      #  similar.to_db_collection())
