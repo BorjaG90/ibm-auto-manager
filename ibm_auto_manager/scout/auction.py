@@ -47,5 +47,6 @@ class Auction:
 			"average": self.average,
 			"date_auction": self.date_auction,
 			"offer": self.offer,
-			"_date": datetime.now()
+			"_date": datetime.now(),
+			"player": self._id
 		}
