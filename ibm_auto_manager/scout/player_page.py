@@ -280,3 +280,17 @@ def insert_similars(similars, db):
       #  {"$and": [{"id_player": ObjectId(id_player.zfill(24))},
       #            {"date_buy_id": ObjectId(id_similar.zfill(24))}]},
       #  similar.to_db_collection())
+
+def updateProgressions(player_id, progression_id, db):
+  """ Actualiza/añade una progresion al jugador
+
+  Keyword arguments:
+    player_id -- Id del jugador con el que cargamos su página
+    progression_id -- Id de la progresion
+    db -- Objeto de conexion a la BD.
+  """
+
+  db.players.update_one(
+    {"_id": ObjectId(player_id.zfill(24))}, 
+    {'$push': {"progressions": ObjectId(progression_id)}}
+  )
