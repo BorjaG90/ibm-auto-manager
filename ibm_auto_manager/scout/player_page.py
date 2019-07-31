@@ -154,9 +154,9 @@ def insert_player(player, player_id, db):
     # print(db.players.find_one({"id_player": player_id}))
     if (db.players.find_one({"_id": ObjectId(player_id.zfill(24))}) is not None):
       # print(show("player") + "    Actualizar P:  " + str(player[0]))
-      db.players.replace_one(
+      db.players.update_one(
         {"_id": ObjectId(player_id.zfill(24))}, 
-        player[0].to_db_collection()
+        {'$set': player[0].to_db_collection()}
       )
     else:
       # print(show("player") + "    Insertar P:  " + str(player[0]))
