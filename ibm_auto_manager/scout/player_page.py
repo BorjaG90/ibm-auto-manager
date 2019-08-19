@@ -173,7 +173,7 @@ def insert_player(player, player_id, db):
       db.players.insert_one(player[1].to_db_collection())
 
 
-def get_similar_data(id_player, auth, register_date=None):
+def get_similar_data(id_player, auth, register_date = None):
   """ Obtenemos los datos de transacciones del jugador pasado por parametro
 
   Keyword arguments:

@@ -16,7 +16,7 @@ from pymongo import MongoClient
 
 from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.general import dashboard_page
-from ibm_auto_manager.scout import market_page
+from ibm_auto_manager.scout import market_page, league_page
 from ibm_auto_manager.trainer import team_page
 
 # ----- Functions -----
@@ -137,19 +137,40 @@ def run(arg=""):
   
   connection = connect()
 
-  if arg == "--market" or arg== "-m" or arg== "market":
+  if arg == "--market" or arg == "-m" or arg == "market":
     """ Ejecución exclusiva del análisis de mercado """
     print("********IBM Auto Manager**********")
     print("\nAnalizando mercado")
     market_page.enter_market(connection["auth"], connection["db"])
 
-  elif arg == "--profile" or arg== "-p" or arg== "profile":
+  elif arg == "--profile" or arg == "-p" or arg == "profile":
     """ Ejecución exclusiva del análisis del perfil """
     print("********IBM Auto Manager**********")
     print("\nAnalizando perfil")
     id_team = dashboard_page.get_profile_data(
       connection["auth"], connection["db"])
     team_page.enter_team(connection["auth"], connection["db"], id_team)
+
+  elif arg == "--teams" or arg == "-t" or arg == "teams":
+    """ Ejecución de analisis de equipos de la parte alta de la competición """
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "m")
+
+  elif arg == "--teams-elite" or arg == "-te" or arg == "teams-elite":
+    """ Ejecución de analisis de equipos de elite de la competición """
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "e")
+  
+  elif arg == "--teams-full" or arg == "-tf" or arg == "teams-full":
+    """ Ejecución de analisis de todos los equipos de la competición"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "f")
 
   elif arg == "":
     """ Ejecución normal """
@@ -160,6 +181,7 @@ def run(arg=""):
       print("********IBM Auto Manager**********")
       print("\n[m] Analizar mercado")
       print("\n[p] Analizar perfil") # Provisional
+      print("\n[t] Analizar competicion")
       print("\n[0] Salir del programa\n")
 
       opcion = input("Introduce una opción: > ")
@@ -168,10 +190,36 @@ def run(arg=""):
         market_page.enter_market(connection["auth"], connection["db"])
       
       if opcion == "p":
-
         id_team = int(dashboard_page.get_profile_data(
           connection["auth"], connection["db"]))
         team_page.enter_team(connection["auth"], connection["db"], id_team)
+
+      if opcion == "m":
+        while True:
+          cls()
+
+          print("********IBM Auto Manager**********")
+          print("****Análisis de Competición******")
+          print("\n[e] Elite / 2 divisiones")
+          print("\n[m] Parte alta / 4 divisiones")
+          print("\n[f] Toda la competicion")
+          print("\n[0] Salir de la opcion\n")
+
+          opcion = input("Introduce las divisiones a analizar: > ")
+          if opcion == "m":
+            league_page.enter_competition(
+              connection["auth"], connection["db"], "m")
+          elif opcion == "e":
+            league_page.enter_competition(
+              connection["auth"], connection["db"], "e")
+          elif opcion == "f":
+            league_page.enter_competition(
+              connection["auth"], connection["db"], "f")
+          elif opcion == "0":
+            cls()
+            break
+          else:
+            print("Opción incorrecta")
 
       elif opcion == "0":
         print("Cerrando programa!")

@@ -100,3 +100,39 @@ def analyze_team_page(auth, db, id_team):
   fans = trs1[3].find_all("td")[1].text.replace(".","").strip()
 
   return [id_user, club_seats, fans, ranking, streak]
+
+def get_season(auth):
+  """ Obtenemos la temporada actual en juego
+
+  Keyword arguments:
+    auth -- Cadena de autenticacion a la web.
+  """
+  session = login(auth)
+
+  # Obtenemos id de la liga actual
+  url = "http://es.ibasketmanager.com/inicio.php"
+
+  r = session.get(url)
+  load_status = 0
+  while load_status != 200:
+    load_status = r.status_code
+
+  soup = BeautifulSoup(r.content, "html.parser")
+  
+  menu = soup.find("div", {"id": "menu1"})
+  id_league = menu.find_all("div")[2].find("a")["href"].split("=")[1].strip()
+  
+  # Obtenemos la temporada
+  url = "http://es.ibasketmanager.com/liga.php?id_liga=" + str(id_league)
+
+  r = session.get(url)
+  load_status = 0
+  while load_status != 200:
+    load_status = r.status_code
+
+  soup = BeautifulSoup(r.content, "html.parser")
+  
+  menu = soup.find_all("div", {"class": "caja2 final"})[0]
+  season = menu.find_all("div", {"class": "selector"})[2].find("span").text
+
+  return season
