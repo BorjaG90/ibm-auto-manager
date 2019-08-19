@@ -59,7 +59,7 @@ def insert_players_data(auth, db, players_ids, get_prog = True):
     if(get_prog):
       future_id = ObjectId((str(int(str(player_id))) + text.get_date_str(datetime.datetime.now(), False)).zfill(24))
       # print(future_id)
-      if(db.progressions.find({"_id": future_id}) is None):
+      if(db.progressions.find_one({"_id": future_id}) is None):
         prog_id = db.progressions.insert_one(
           player[1].to_db_collection_prog()).inserted_id
         # print(show("progression") + ": " + str(prog_id))

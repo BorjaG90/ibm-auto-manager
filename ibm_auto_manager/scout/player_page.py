@@ -290,11 +290,14 @@ def updateProgressions(player_id, progression_id, db):
     progression_id -- Id de la progresion
     db -- Objeto de conexion a la BD.
   """
-
-  db.players.update_one(
-    {"_id": ObjectId(player_id.zfill(24))}, 
-    {'$push': {"progressions": ObjectId(progression_id)}}
-  )
+  if(db.players.find_one({"progressions": ObjectId(progression_id)}) is None):
+    print("Inserta prog")
+    db.players.update_one(
+      {"_id": ObjectId(player_id.zfill(24))}, 
+      {'$push': {"progressions": ObjectId(progression_id)}}
+    )
+  # else:
+    # print("Insertado")
 
 
 def updateAuctions(player_id, auction_id, db):
@@ -305,7 +308,11 @@ def updateAuctions(player_id, auction_id, db):
     auction_id -- Id de Subasta
     db -- Objeto de conexion a la BD.
   """
-  db.players.update_one(
-    {"_id": ObjectId(player_id.zfill(24))}, 
-    {'$push': {"auctions": auction_id}}
-  )
+
+  if(db.players.find_one({"auctions": ObjectId(auction_id)}) is None):
+    db.players.update_one(
+      {"_id": ObjectId(player_id.zfill(24))}, 
+      {'$push': {"auctions": ObjectId(auction_id)}}
+    )
+  else:
+    print("Insertado")

@@ -83,16 +83,9 @@ def analyze_market_page(auth, params, db):
     similars = player_page.get_similar_data(id_player, auth)
     # print(similars)
     # Insertamos la subasta
-    print(v_auction.date_auction)
-    print(
-      str(v_auction.date_auction.year) + 
-      str(v_auction.date_auction.month) +
-      str(v_auction.date_auction.day) +
-      str(v_auction.date_auction.hour) +
-      str(v_auction.date_auction.minute)
-    )
+    # print(v_auction.date_auction)
     db.auctions.insert_one(v_auction.to_db_collection())
-    db.auctions_history.insert_one(v_auction.to_db_collection())
+    db.auctions_history.replace_one(v_auction.to_db_collection(),{"upsert": True})
 
     player_page.insert_player(player, id_player, db)
     player_page.insert_similars(similars, db)
