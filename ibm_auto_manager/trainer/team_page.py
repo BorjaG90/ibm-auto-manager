@@ -7,8 +7,10 @@ import datetime
 import time
 
 from bs4 import BeautifulSoup
+from bson import ObjectId
 
 from ibm_auto_manager.common.util import show
+from ibm_auto_manager.common import text
 from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import roster_page, player_page
 
@@ -55,8 +57,11 @@ def insert_players_data(auth, db, players_ids, get_prog = True):
 
     # Si recibimos la orden de guardar la progresión de los jugadores
     if(get_prog):
-      prog_id = db.progressions.insert_one(
-        player[1].to_db_collection_prog()).inserted_id
-      #print(show("progression") + ": " + str(prog_id))
+      future_id = ObjectId((str(int(str(player_id))) + text.get_date_str(datetime.datetime.now(), False)).zfill(24))
+      # print(future_id)
+      if(db.progressions.find({"_id": future_id}) is None):
+        prog_id = db.progressions.insert_one(
+          player[1].to_db_collection_prog()).inserted_id
+        # print(show("progression") + ": " + str(prog_id))
 
-      player_page.updateProgressions(player_id, prog_id, db)
+      player_page.updateProgressions(player_id, future_id, db)

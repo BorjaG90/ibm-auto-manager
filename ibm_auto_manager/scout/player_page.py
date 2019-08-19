@@ -281,6 +281,7 @@ def insert_similars(similars, db):
       #            {"date_buy_id": ObjectId(id_similar.zfill(24))}]},
       #  similar.to_db_collection())
 
+
 def updateProgressions(player_id, progression_id, db):
   """ Actualiza/añade una progresion al jugador
 
@@ -293,4 +294,18 @@ def updateProgressions(player_id, progression_id, db):
   db.players.update_one(
     {"_id": ObjectId(player_id.zfill(24))}, 
     {'$push': {"progressions": ObjectId(progression_id)}}
+  )
+
+
+def updateAuctions(player_id, auction_id, db):
+  """ Actualiza/añade una subasta al jugador
+
+  Keyword arguments:
+    player_id -- Id del jugador con el que cargamos su página
+    auction_id -- Id de Subasta
+    db -- Objeto de conexion a la BD.
+  """
+  db.players.update_one(
+    {"_id": ObjectId(player_id.zfill(24))}, 
+    {'$push': {"auctions": auction_id}}
   )

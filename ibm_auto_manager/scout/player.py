@@ -170,6 +170,7 @@ class PlayerAtributes:
   def to_db_collection_prog(self):
     """Devuelve la progresión del jugador en un formato legible de MongoDB."""
     return{
+      "_id": ObjectId((str(int(str(self.player_id))) + text.get_date_str(datetime.now(), False)).zfill(24)),
       "player_id": self.player_id,
       "power": self.power,
       "ambition": self.ambition,

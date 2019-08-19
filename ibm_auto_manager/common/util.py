@@ -8,6 +8,7 @@ import time
 
 def cls():
   """ Limpia la terminal según el sistema operativo """
+  print("\n\n")
   os.system('cls' if os.name=='nt' else 'clear')
 
 

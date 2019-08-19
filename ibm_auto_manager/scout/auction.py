@@ -20,7 +20,8 @@ class Auction:
 							date_auction,
 							offer
 							):
-		self._id = ObjectId(id_player.zfill(24))
+		self._id = ObjectId((id_player + text.get_date_str(date_auction)).zfill(24))
+		self.player = ObjectId(id_player.zfill(24))
 		self.position = pos
 		self.average = int(avg)
 		self.age = int(age)
@@ -48,5 +49,5 @@ class Auction:
 			"date_auction": self.date_auction,
 			"offer": self.offer,
 			"_date": datetime.now(),
-			"player": self._id
+			"player": self.player
 		}

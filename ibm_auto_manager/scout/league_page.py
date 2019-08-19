@@ -91,6 +91,7 @@ def enter_competition(auth, db, option):
       for team_id in teams_ids:
         enter_team(auth, db, team_id, False)
 
+
 def analyze_standings(league_url, auth):
     """ Analizamos los equipos de la liga pasada por parametro.
         Devolvemos los ids de los equipos inscritos a esa liga

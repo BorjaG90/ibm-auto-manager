@@ -102,6 +102,7 @@ def date_translation(html_content):
 
   return html_content
 
+
 def date_market_translation(html_content):
   """Transform short date format to standard date format.
 
@@ -136,3 +137,12 @@ def date_market_translation(html_content):
 
   return today
     
+
+def get_date_str(p_date, seconds = True):
+  """ Devuelve la cadena de una fecha """
+  if(seconds):
+    res = str(str(p_date.year) +  str(p_date.month) + str(p_date.day) + str(p_date.hour) + str(p_date.minute))
+  else:
+    res = str(str(p_date.year) +  str(p_date.month) + str(p_date.day))
+
+  return res
