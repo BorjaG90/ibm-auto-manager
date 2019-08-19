@@ -19,8 +19,7 @@ class Profile:
               club_seats, # socios
               fans, # aficionados
               ranking_team,
-              streak, # racha de partidos
-
+              streak # racha de partidos
               ):
     self._id = ObjectId(id_user.zfill(24))
     self.username = str(username)

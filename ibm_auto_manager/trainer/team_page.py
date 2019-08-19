@@ -13,7 +13,7 @@ from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import roster_page, player_page
 
 
-def enter_team(auth, db, own_team_id):
+def enter_team(auth, db, team_id, get_prog = True):
   """ Recorremos las páginas de plantilla y cantera del equipo
     y registra los atributos de los jugadores para
     la posterior comprobación de la progresión
@@ -21,29 +21,42 @@ def enter_team(auth, db, own_team_id):
   Keyword arguments:
     auth -- Cadena de autenticacion a la web.
     db -- Objeto de conexion a la BD.
-    own_team_id -- Id del equipo
+    team_id -- Id del equipo
+    get_prog -- 
   """
   session = login(auth)
 
   # Analizo el progreso del equipo
-  print(show("team_info") + "   > Analizando Equipo propio: " + str(own_team_id))
+  print(show("team_info") + "   > Analizando Equipo: " + str(team_id))
 
   # Seniors
-  print(show("roster") + "   -> Plantilla: " + str(own_team_id))
-  players_ids = roster_page.enter_senior_roster(own_team_id, auth)
+  print(show("roster") + "    -> Plantilla: " + str(team_id))
+  players_ids = roster_page.enter_senior_roster(team_id, auth)
+  insert_players_data(auth, db, players_ids, get_prog)
+
+  # Juniors
+  print(show("juniors") + "    -> Cantera:   " + str(team_id))
+  juniors_ids = roster_page.enter_junior_roster(team_id, auth)
+  insert_players_data(auth, db, juniors_ids, get_prog)
+
+
+def insert_players_data(auth, db, players_ids, get_prog = True):
+  """ Realizamos el bucle de inserción de los ids
+
+  Keyword arguments:
+    auth -- Cadena de autenticacion a la web.
+    db -- Objeto de conexion a la BD.
+    players_ids -- Array de Ids de los jugadores
+  """
   for player_id in players_ids:
     player = player_page.get_player_data(player_id, auth)
 
     player_page.insert_player(player, player_id, db)
 
-    db.progressions.insert_one(player[1].to_db_collection_prog())
+    # Si recibimos la orden de guardar la progresión de los jugadores
+    if(get_prog):
+      prog_id = db.progressions.insert_one(
+        player[1].to_db_collection_prog()).inserted_id
+      #print(show("progression") + ": " + str(prog_id))
 
-  # Juniors
-  print(show("juniors") + "   -> Cantera:   " + str(own_team_id))
-  juniors_ids = roster_page.enter_junior_roster(own_team_id, auth)
-  for junior_id in juniors_ids:
-    junior = player_page.get_player_data(junior_id, auth)
-
-    player_page.insert_player(junior, junior_id, db)
-
-    db.progressions.insert_one(player[1].to_db_collection_prog())
+      player_page.updateProgressions(player_id, prog_id, db)

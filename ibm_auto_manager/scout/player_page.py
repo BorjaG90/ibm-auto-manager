@@ -154,9 +154,9 @@ def insert_player(player, player_id, db):
     # print(db.players.find_one({"id_player": player_id}))
     if (db.players.find_one({"_id": ObjectId(player_id.zfill(24))}) is not None):
       # print(show("player") + "    Actualizar P:  " + str(player[0]))
-      db.players.replace_one(
+      db.players.update_one(
         {"_id": ObjectId(player_id.zfill(24))}, 
-        player[0].to_db_collection()
+        {'$set': player[0].to_db_collection()}
       )
     else:
       # print(show("player") + "    Insertar P:  " + str(player[0]))
@@ -173,7 +173,7 @@ def insert_player(player, player_id, db):
       db.players.insert_one(player[1].to_db_collection())
 
 
-def get_similar_data(id_player, auth, register_date=None):
+def get_similar_data(id_player, auth, register_date = None):
   """ Obtenemos los datos de transacciones del jugador pasado por parametro
 
   Keyword arguments:
@@ -280,3 +280,17 @@ def insert_similars(similars, db):
       #  {"$and": [{"id_player": ObjectId(id_player.zfill(24))},
       #            {"date_buy_id": ObjectId(id_similar.zfill(24))}]},
       #  similar.to_db_collection())
+
+def updateProgressions(player_id, progression_id, db):
+  """ Actualiza/añade una progresion al jugador
+
+  Keyword arguments:
+    player_id -- Id del jugador con el que cargamos su página
+    progression_id -- Id de la progresion
+    db -- Objeto de conexion a la BD.
+  """
+
+  db.players.update_one(
+    {"_id": ObjectId(player_id.zfill(24))}, 
+    {'$push': {"progressions": ObjectId(progression_id)}}
+  )
