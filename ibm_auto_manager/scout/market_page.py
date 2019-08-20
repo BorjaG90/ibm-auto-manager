@@ -85,7 +85,9 @@ def analyze_market_page(auth, params, db):
     # Insertamos la subasta
     # print(v_auction.date_auction)
     db.auctions.insert_one(v_auction.to_db_collection())
-    db.auctions_history.replace_one(v_auction.to_db_collection(),{"upsert": True})
+    db.auctions_history.replace_one(
+      {'_id': v_auction._id}, v_auction.to_db_collection(), True
+    )
 
     player_page.insert_player(player, id_player, db)
     player_page.insert_similars(similars, db)

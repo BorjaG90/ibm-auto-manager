@@ -6,7 +6,7 @@ __email__ = 'borjagete90@outlook.es'
 import re
 import time
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from bson import ObjectId
 
 from ibm_auto_manager.common import text
@@ -126,6 +126,13 @@ def analyze_player_page(id_player, html_content):
     # for t in mrx:
     #   print(t.text)
 
+    # Lealtad
+    ml = soup.find_all("div", {"class": "ml"})
+    for comments in ml[2].findAll(text=lambda text:isinstance(text, Comment)):
+      comment = comments[comments.find('jugbarranum">')+13:]
+      loyalty = comment[:comment.find('</div')]
+      print(loyalty)
+
     return [player.Player(id_player, team_id, name, position, age, heigth,
                           weight, canon, salary, clause, years, juvenil,
                           country),
@@ -134,7 +141,7 @@ def analyze_player_page(id_player, html_content):
                                   marking, rebound, block, recover, two,
                                   three, free, assist, dribbling, dunk,
                                   fight, mental, physic, defense, offense,
-                                  total)]
+                                  total, loyalty)]
   else:
       return None
 
@@ -291,7 +298,7 @@ def updateProgressions(player_id, progression_id, db):
     db -- Objeto de conexion a la BD.
   """
   if(db.players.find_one({"progressions": ObjectId(progression_id)}) is None):
-    print("Inserta prog")
+    # print("Inserta prog")
     db.players.update_one(
       {"_id": ObjectId(player_id.zfill(24))}, 
       {'$push': {"progressions": ObjectId(progression_id)}}
@@ -314,5 +321,5 @@ def updateAuctions(player_id, auction_id, db):
       {"_id": ObjectId(player_id.zfill(24))}, 
       {'$push': {"auctions": ObjectId(auction_id)}}
     )
-  else:
-    print("Insertado")
+  # else:
+    # print("Insertado")

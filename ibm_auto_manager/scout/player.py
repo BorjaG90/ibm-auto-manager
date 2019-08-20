@@ -97,7 +97,8 @@ class PlayerAtributes:
               physic,
               defense,
               offense,
-              total
+              total,
+              loyalty
               ):
     self.player_id = ObjectId(id_player.zfill(24))
     self.power = int(power)
@@ -124,6 +125,7 @@ class PlayerAtributes:
     self.defense = int(defense)
     self.offense = int(offense)
     self.total = int(total)
+    self.loyalty = int(loyalty)
 
   def __str__(self):
     return "Id: {}, medias -> Tot: {}, Off: {}, Def: {}, \
@@ -143,6 +145,7 @@ class PlayerAtributes:
       "power": self.power,
       "ambition": self.ambition,
       "leadership": self.leadership,
+      "loyalty": self.loyalty,
       "exp": self.exp,
       "speed": self.speed,
       "jump": self.jump,
@@ -175,6 +178,7 @@ class PlayerAtributes:
       "power": self.power,
       "ambition": self.ambition,
       "leadership": self.leadership,
+      "loyalty": self.loyalty,
       "exp": self.exp,
       "speed": self.speed,
       "jump": self.jump,
