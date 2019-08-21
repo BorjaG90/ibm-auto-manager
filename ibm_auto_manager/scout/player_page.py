@@ -131,7 +131,7 @@ def analyze_player_page(id_player, html_content):
     for comments in ml[2].findAll(text=lambda text:isinstance(text, Comment)):
       comment = comments[comments.find('jugbarranum">')+13:]
       loyalty = comment[:comment.find('</div')]
-      print(loyalty)
+      # print(loyalty)
 
     return [player.Player(id_player, team_id, name, position, age, heigth,
                           weight, canon, salary, clause, years, juvenil,
