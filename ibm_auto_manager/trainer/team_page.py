@@ -33,16 +33,16 @@ def enter_team(auth, db, team_id, get_prog = True):
 
   # Seniors
   print(show("roster") + "    -> Plantilla: " + str(team_id))
-  players_ids = roster_page.enter_senior_roster(team_id, auth)
-  insert_players_data(auth, db, players_ids, get_prog)
+  players_ids = roster_page.enter_senior_roster(team_id, auth, session)
+  insert_players_data(auth, db, players_ids, get_prog, session)
 
   # Juniors
   print(show("juniors") + "    -> Cantera:   " + str(team_id))
-  juniors_ids = roster_page.enter_junior_roster(team_id, auth)
-  insert_players_data(auth, db, juniors_ids, get_prog)
+  juniors_ids = roster_page.enter_junior_roster(team_id, auth, session)
+  insert_players_data(auth, db, juniors_ids, get_prog, session)
 
 
-def insert_players_data(auth, db, players_ids, get_prog = True):
+def insert_players_data(auth, db, players_ids, get_prog = True, session = None):
   """ Realizamos el bucle de inserción de los ids
 
   Keyword arguments:
@@ -51,7 +51,7 @@ def insert_players_data(auth, db, players_ids, get_prog = True):
     players_ids -- Array de Ids de los jugadores
   """
   for player_id in players_ids:
-    player = player_page.get_player_data(player_id, auth)
+    player = player_page.get_player_data(player_id, auth, session)
 
     player_page.insert_player(player, player_id, db)
 

@@ -15,7 +15,7 @@ from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import player, transaction
 
 
-def get_player_data(id_player, auth):
+def get_player_data(id_player, auth, session = None):
   """ Obtenemos los datos del jugador pasado por parametros
 
   Keyword arguments:
@@ -23,7 +23,10 @@ def get_player_data(id_player, auth):
     auth -- Cadena de autenticacion a la web.
   """
 
-  session = login(auth)
+  if session is None:
+    print("[Relogging]")
+    session = login(auth)
+
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
@@ -180,15 +183,16 @@ def insert_player(player, player_id, db):
       db.players.insert_one(player[1].to_db_collection())
 
 
-def get_similar_data(id_player, auth, register_date = None):
+def get_similar_data(id_player, auth, register_date = None, session = None):
   """ Obtenemos los datos de transacciones del jugador pasado por parametro
 
   Keyword arguments:
     id_player -- Id del jugador con el que cargamos su página
     auth -- Cadena de autenticacion a la web.
   """
-
-  session = login(auth)
+  if session is None:
+    print("[Relogging]")
+    session = login(auth)
 
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412

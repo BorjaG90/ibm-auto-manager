@@ -181,6 +181,7 @@ def auto_offer(auth, play_aut_id=None):
       # print('#########')
       # print(str(soup))
       # print('#########')
+      
       final = soup.find("td",{"class":"formerror"})
       print(final.find(text=True, recursive=False))
       if(final==None):

@@ -78,9 +78,9 @@ def analyze_market_page(auth, params, db):
     # print("\t{}".format(auction))
     # Realizamos un analisis profundo de cada jugador
     id_player = str(int(str(v_auction.player)))
-    player = player_page.get_player_data(id_player, auth)
+    player = player_page.get_player_data(id_player, auth, session)
     # Esto es una tupla
-    similars = player_page.get_similar_data(id_player, auth)
+    similars = player_page.get_similar_data(id_player, auth, None, session)
     # print(similars)
     # Insertamos la subasta
     # print(v_auction.date_auction)
