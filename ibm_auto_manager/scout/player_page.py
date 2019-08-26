@@ -56,16 +56,26 @@ def analyze_player_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   
   # Datos
-  name = soup.find("div", {"class": "barrajugador"})
-  if name is not None:  # El jugador está en medio de un partido
-    name = name.text.strip()
+  barra = soup.find("div", {"class": "barrajugador"})
+  if barra is not None:  # El jugador está en medio de un partido
+    estado =  barra.findChildren("div" , recursive=False)[0]
+    name = barra.text.strip()
     name = str(re.search(r'[A-ZÁÉÍÓÚ][\w\W]+', name).group(0))
-
     if name.find('(Juvenil)') > 0:
       juvenil = True
       name = name.replace('(Juvenil)', '')
     else:
       juvenil = False
+    # print(estado)
+    if(estado.find('img') is not None):
+      print(name + " Ascendido")
+      juvenil = True
+
+    # estado = soup.find("div", {"div": "estadojugador"})
+    # print(name)
+    # if estado.text is not None: # ascendido
+      # juvenil = True
+
     name = name.strip()
     caja50 = soup.find_all("div", {"class": "caja50"})
     data0 = caja50[0].find_all("td")

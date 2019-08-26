@@ -3,8 +3,8 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
-from datetime import datetime
 from bson import ObjectId
+from datetime import datetime
 
 
 class Profile:
