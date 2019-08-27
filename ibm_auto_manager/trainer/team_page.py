@@ -69,12 +69,17 @@ def analyze_team(team_id, html_content):
   name = th.text
   # print("Name: " + name)
 
-  id_user = data[1].find_all(
-    'a')[0]['href'][data[1].find_all('a')[0]['href'].find('=')+1:]
-  # print("IdUser: " + id_user)
-
   user = data[1].text
   # print("User: " + user)
+
+  if user != 'System bot':
+    id_user = data[1].find_all('a')[0]['href'][
+      data[1].find_all('a')[0]['href'].find('=')+1:]
+    # print("IdUser: " + id_user)
+  else:
+    id_user = str(0)
+
+  
 
   arena = data[3].find_all('a')[0].text
   # print("Arena: " + arena)

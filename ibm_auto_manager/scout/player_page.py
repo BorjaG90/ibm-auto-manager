@@ -68,13 +68,8 @@ def analyze_player_page(id_player, html_content):
       juvenil = False
     # print(estado)
     if(estado.find('img') is not None):
-      print(name + " Ascendido")
+      # print(name + " Ascendido")
       juvenil = True
-
-    # estado = soup.find("div", {"div": "estadojugador"})
-    # print(name)
-    # if estado.text is not None: # ascendido
-      # juvenil = True
 
     name = name.strip()
     caja50 = soup.find_all("div", {"class": "caja50"})

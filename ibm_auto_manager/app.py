@@ -173,6 +173,20 @@ def run(arg=""):
     print("\nAnalizando competición")
     league_page.enter_competition(connection["auth"], connection["db"], "f")
 
+  elif arg == "--teams-mid" or arg == "-tm" or arg == "teams-mid":
+    """ Ejecución de analisis delos equipos de 3 y 4 de la competición"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "2")
+
+  elif arg == "--teams-low" or arg == "-tl" or arg == "teams-low":
+    """ Ejecución de analisis delos equipos de 3 y 4 de la competición"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "3")
+
   elif arg == "--auto-bid" or arg == "-b" or arg == "auto-bid":
     """ Ejecución de auto_apuesta en la subasta de un jugador"""
     

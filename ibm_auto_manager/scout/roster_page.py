@@ -74,7 +74,7 @@ def enter_junior_roster(id_team, auth, session = None):
   juniors_str = BeautifulSoup(str(juniors_str), "html.parser").find_all(
     "td", {"class": "jugador"})
   if juniors_str is not None:
-    print(juniors_str)
+    # print(juniors_str)
     for junior_str in juniors_str:
       # print(junior_str.find('a')['href'][junior_str.find(
       #    'a')['href'].find('=')+1:])
