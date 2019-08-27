@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from ibm_auto_manager.connection.login_page import login
 
 
-def enter_senior_roster(id_team, auth):
+def enter_senior_roster(id_team, auth, session = None):
   """ Recorremos las páginas de plantillas
     Devolvemos un array con los ids de los jugadores
       que conforman la plantilla
@@ -18,7 +18,9 @@ def enter_senior_roster(id_team, auth):
     auth -- Cadena de autenticacion a la web.
     db -- Objeto de conexion a la BD.
   """
-  session = login(auth)
+
+  if session is None:
+    session = login(auth)
 
   senior_roster_url = "http://es.ibasketmanager.com/plantilla.php?id_equipo="\
     + str(id_team)
@@ -44,7 +46,7 @@ def enter_senior_roster(id_team, auth):
   return seniors
 
 
-def enter_junior_roster(id_team, auth):
+def enter_junior_roster(id_team, auth, session = None):
   """ Recorremos las páginas de canteras
     Devolvemos un array con los ids de los jugadores que
       conforman la cantera
@@ -54,7 +56,9 @@ def enter_junior_roster(id_team, auth):
     auth -- Cadena de autenticacion a la web.
     db -- Objeto de conexion a la BD.
   """
-  session = login(auth)
+
+  if session is None:
+    session = login(auth)
 
   jr_url = "http://es.ibasketmanager.com/plantilla.php?" + \
     "juveniles=1&id_equipo=" + str(id_team)
@@ -70,6 +74,7 @@ def enter_junior_roster(id_team, auth):
   juniors_str = BeautifulSoup(str(juniors_str), "html.parser").find_all(
     "td", {"class": "jugador"})
   if juniors_str is not None:
+    # print(juniors_str)
     for junior_str in juniors_str:
       # print(junior_str.find('a')['href'][junior_str.find(
       #    'a')['href'].find('=')+1:])

@@ -22,23 +22,9 @@ def enter_competition(auth, db, option):
   season = get_season(auth)
   p_division = 1
   p_group = 1
-
-  # División 1
-  print(show("division") + " > Analizando división " + str(p_division))
-  league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
-    str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
-
-  teams_ids = analyze_standings(league_url, auth)
-
-  for team_id in teams_ids:
-    enter_team(auth, db, team_id, False)
-
-  # División 2
-  p_division = 2
-  print(show("division") + " > Analizando división " + str(p_division))
-  for p_group in range(1, 5):
-    print(show("division") + "   > Analizando división " + str(p_division) + \
-      " Grupo: " + str(p_group))
+  if (option != "2" and option != "3"):
+    # División 1
+    print(show("division") + " > Analizando división " + str(p_division))
     league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
       str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
@@ -47,7 +33,21 @@ def enter_competition(auth, db, option):
     for team_id in teams_ids:
       enter_team(auth, db, team_id, False)
 
-  if (option == "m" or option == "f"):
+    # División 2
+    p_division = 2
+    print(show("division") + " > Analizando división " + str(p_division))
+    for p_group in range(1, 5):
+      print(show("division") + "   > Analizando división " + str(p_division) + \
+        " Grupo: " + str(p_group))
+      league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
+        str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
+
+      teams_ids = analyze_standings(league_url, auth)
+
+      for team_id in teams_ids:
+        enter_team(auth, db, team_id, False)
+
+  if (option == "m" or option == "f" or option == "2"):
     # División 3
     p_division = 3
     print(show("division") + " > Analizando división " + str(p_division))
@@ -76,7 +76,7 @@ def enter_competition(auth, db, option):
       for team_id in teams_ids:
         enter_team(auth, db, team_id, False)
 
-  if (option == "f"):
+  if (option == "f" or option == "3"):
     # División 5
     p_division = 5
     print(show("division") + " > Analizando división " + str(p_division))
@@ -90,6 +90,7 @@ def enter_competition(auth, db, option):
 
       for team_id in teams_ids:
         enter_team(auth, db, team_id, False)
+
 
 def analyze_standings(league_url, auth):
     """ Analizamos los equipos de la liga pasada por parametro.

@@ -6,7 +6,7 @@ __email__ = 'borjagete90@outlook.es'
 import re
 import time
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from bson import ObjectId
 
 from ibm_auto_manager.common import text
@@ -15,7 +15,7 @@ from ibm_auto_manager.connection.login_page import login
 from ibm_auto_manager.scout import player, transaction
 
 
-def get_player_data(id_player, auth):
+def get_player_data(id_player, auth, session = None):
   """ Obtenemos los datos del jugador pasado por parametros
 
   Keyword arguments:
@@ -23,7 +23,10 @@ def get_player_data(id_player, auth):
     auth -- Cadena de autenticacion a la web.
   """
 
-  session = login(auth)
+  if session is None:
+    print("[Relogging]")
+    session = login(auth)
+
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
   # id_player = 7856412
@@ -53,16 +56,21 @@ def analyze_player_page(id_player, html_content):
   soup = BeautifulSoup(html_content, 'html.parser')
   
   # Datos
-  name = soup.find("div", {"class": "barrajugador"})
-  if name is not None:  # El jugador está en medio de un partido
-    name = name.text.strip()
+  barra = soup.find("div", {"class": "barrajugador"})
+  if barra is not None:  # El jugador está en medio de un partido
+    estado =  barra.findChildren("div" , recursive=False)[0]
+    name = barra.text.strip()
     name = str(re.search(r'[A-ZÁÉÍÓÚ][\w\W]+', name).group(0))
-
     if name.find('(Juvenil)') > 0:
       juvenil = True
       name = name.replace('(Juvenil)', '')
     else:
       juvenil = False
+    # print(estado)
+    if(estado.find('img') is not None):
+      # print(name + " Ascendido")
+      juvenil = True
+
     name = name.strip()
     caja50 = soup.find_all("div", {"class": "caja50"})
     data0 = caja50[0].find_all("td")
@@ -126,6 +134,13 @@ def analyze_player_page(id_player, html_content):
     # for t in mrx:
     #   print(t.text)
 
+    # Lealtad
+    ml = soup.find_all("div", {"class": "ml"})
+    for comments in ml[2].findAll(text=lambda text:isinstance(text, Comment)):
+      comment = comments[comments.find('jugbarranum">')+13:]
+      loyalty = comment[:comment.find('</div')]
+      # print(loyalty)
+
     return [player.Player(id_player, team_id, name, position, age, heigth,
                           weight, canon, salary, clause, years, juvenil,
                           country),
@@ -134,7 +149,7 @@ def analyze_player_page(id_player, html_content):
                                   marking, rebound, block, recover, two,
                                   three, free, assist, dribbling, dunk,
                                   fight, mental, physic, defense, offense,
-                                  total)]
+                                  total, loyalty)]
   else:
       return None
 
@@ -173,15 +188,16 @@ def insert_player(player, player_id, db):
       db.players.insert_one(player[1].to_db_collection())
 
 
-def get_similar_data(id_player, auth, register_date = None):
+def get_similar_data(id_player, auth, register_date = None, session = None):
   """ Obtenemos los datos de transacciones del jugador pasado por parametro
 
   Keyword arguments:
     id_player -- Id del jugador con el que cargamos su página
     auth -- Cadena de autenticacion a la web.
   """
-
-  session = login(auth)
+  if session is None:
+    print("[Relogging]")
+    session = login(auth)
 
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7192302
   # http://es.ibasketmanager.com/jugador.php?id_jugador=7856412
@@ -281,6 +297,7 @@ def insert_similars(similars, db):
       #            {"date_buy_id": ObjectId(id_similar.zfill(24))}]},
       #  similar.to_db_collection())
 
+
 def updateProgressions(player_id, progression_id, db):
   """ Actualiza/añade una progresion al jugador
 
@@ -289,8 +306,29 @@ def updateProgressions(player_id, progression_id, db):
     progression_id -- Id de la progresion
     db -- Objeto de conexion a la BD.
   """
+  if(db.players.find_one({"progressions": ObjectId(progression_id)}) is None):
+    # print("Inserta prog")
+    db.players.update_one(
+      {"_id": ObjectId(player_id.zfill(24))}, 
+      {'$push': {"progressions": ObjectId(progression_id)}}
+    )
+  # else:
+    # print("Insertado")
 
-  db.players.update_one(
-    {"_id": ObjectId(player_id.zfill(24))}, 
-    {'$push': {"progressions": ObjectId(progression_id)}}
-  )
+
+def updateAuctions(player_id, auction_id, db):
+  """ Actualiza/añade una subasta al jugador
+
+  Keyword arguments:
+    player_id -- Id del jugador con el que cargamos su página
+    auction_id -- Id de Subasta
+    db -- Objeto de conexion a la BD.
+  """
+
+  if(db.players.find_one({"auctions": ObjectId(auction_id)}) is None):
+    db.players.update_one(
+      {"_id": ObjectId(player_id.zfill(24))}, 
+      {'$push': {"auctions": ObjectId(auction_id)}}
+    )
+  # else:
+    # print("Insertado")

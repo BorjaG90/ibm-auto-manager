@@ -4,6 +4,7 @@ __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 from ibm_auto_manager.common import text
 from ibm_auto_manager.common.util import cls, show
@@ -76,16 +77,21 @@ def analyze_market_page(auth, params, db):
   for v_auction in auctions:
     # print("\t{}".format(auction))
     # Realizamos un analisis profundo de cada jugador
-    id_subasta = str(int(str(v_auction._id)))
-    player = player_page.get_player_data(id_subasta, auth)
+    id_player = str(int(str(v_auction.player)))
+    player = player_page.get_player_data(id_player, auth, session)
     # Esto es una tupla
-    similars = player_page.get_similar_data(id_subasta, auth)
+    similars = player_page.get_similar_data(id_player, auth, None, session)
     # print(similars)
     # Insertamos la subasta
+    # print(v_auction.date_auction)
     db.auctions.insert_one(v_auction.to_db_collection())
+    db.auctions_history.replace_one(
+      {'_id': v_auction._id}, v_auction.to_db_collection(), True
+    )
 
-    player_page.insert_player(player, id_subasta, db)
+    player_page.insert_player(player, id_player, db)
     player_page.insert_similars(similars, db)
+    player_page.updateAuctions(id_player, v_auction._id, db)
 
 
 def get_auctions(html_content):

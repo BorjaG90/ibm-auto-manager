@@ -18,6 +18,7 @@ from ibm_auto_manager.common.util import cls, show
 from ibm_auto_manager.general import dashboard_page
 from ibm_auto_manager.scout import market_page, league_page
 from ibm_auto_manager.trainer import team_page
+from ibm_auto_manager.dt import automation
 
 # ----- Functions -----
 def config():
@@ -172,6 +173,34 @@ def run(arg=""):
     print("\nAnalizando competición")
     league_page.enter_competition(connection["auth"], connection["db"], "f")
 
+  elif arg == "--teams-mid" or arg == "-tm" or arg == "teams-mid":
+    """ Ejecución de analisis delos equipos de 3 y 4 de la competición"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "2")
+
+  elif arg == "--teams-low" or arg == "-tl" or arg == "teams-low":
+    """ Ejecución de analisis delos equipos de 3 y 4 de la competición"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando competición")
+    league_page.enter_competition(connection["auth"], connection["db"], "3")
+
+  elif arg == "--auto-bid" or arg == "-b" or arg == "auto-bid":
+    """ Ejecución de auto_apuesta en la subasta de un jugador"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando subasta")
+    automation.auto_bid(connection["auth"])
+
+  elif arg == "--auto-offer" or arg == "-o" or arg == "auto-offer":
+    """ Ejecución de auto_oferta en la renovación de un jugador"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nAnalizando contrato")
+    automation.auto_offer(connection["auth"])
+
   elif arg == "":
     """ Ejecución normal """
     # Menu
@@ -182,9 +211,17 @@ def run(arg=""):
       print("\n[m] Analizar mercado")
       print("\n[p] Analizar perfil") # Provisional
       print("\n[t] Analizar competicion")
+      print("\n[b] Realizar apuesta en subasta")
+      print("\n[o] Realizar oferta de renovación")
       print("\n[0] Salir del programa\n")
 
       opcion = input("Introduce una opción: > ")
+
+      if opcion == "b":
+        automation.auto_bid(connection["auth"])
+
+      if opcion == "o":
+        automation.auto_offer(connection["auth"])
 
       if opcion == "m":
         market_page.enter_market(connection["auth"], connection["db"])
