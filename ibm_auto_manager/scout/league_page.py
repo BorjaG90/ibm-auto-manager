@@ -18,8 +18,10 @@ def enter_competition(auth, db, option):
         auth -- Cadena de autenticacion a la web.
         db -- Objeto de conexion a la BD.
         option -- opción de divisiones a analizar
-    """
+  """
   season = get_season(auth)
+  session = login(auth)
+
   p_division = 1
   p_group = 1
   if (option != "2" and option != "3"):
@@ -28,10 +30,10 @@ def enter_competition(auth, db, option):
     league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
       str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
-    teams_ids = analyze_standings(league_url, auth)
+    teams_ids = analyze_standings(league_url, auth, session)
 
     for team_id in teams_ids:
-      enter_team(auth, db, team_id, False)
+      enter_team(auth, db, team_id, False, session)
 
     # División 2
     p_division = 2
@@ -42,11 +44,12 @@ def enter_competition(auth, db, option):
       league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
         str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
-      teams_ids = analyze_standings(league_url, auth)
+      teams_ids = analyze_standings(league_url, auth, session)
 
       for team_id in teams_ids:
-        enter_team(auth, db, team_id, False)
+        enter_team(auth, db, team_id, False, session)
 
+  session = login(auth)
   if (option == "m" or option == "f" or option == "2"):
     # División 3
     p_division = 3
@@ -57,11 +60,12 @@ def enter_competition(auth, db, option):
       league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
         str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
-      teams_ids = analyze_standings(league_url, auth)
+      teams_ids = analyze_standings(league_url, auth, session)
 
       for team_id in teams_ids:
-        enter_team(auth, db, team_id, False)
+        enter_team(auth, db, team_id, False, session)
 
+    session = login(auth)
     # División 4
     p_division = 4
     print(show("division") + " > Analizando división " + str(p_division))
@@ -71,11 +75,12 @@ def enter_competition(auth, db, option):
       league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
         str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
-      teams_ids = analyze_standings(league_url, auth)
+      teams_ids = analyze_standings(league_url, auth, session)
 
       for team_id in teams_ids:
-        enter_team(auth, db, team_id, False)
+        enter_team(auth, db, team_id, False, session)
 
+  session = login(auth)
   if (option == "f" or option == "3"):
     # División 5
     p_division = 5
@@ -86,13 +91,13 @@ def enter_competition(auth, db, option):
       league_url = 'http://es.ibasketmanager.com/liga.php?temporada=' + \
         str(season) + '&division=' + str(p_division) + '&grupo=' + str(p_group)
 
-      teams_ids = analyze_standings(league_url, auth)
+      teams_ids = analyze_standings(league_url, auth, session)
 
       for team_id in teams_ids:
-        enter_team(auth, db, team_id, False)
+        enter_team(auth, db, team_id, False, session)
 
 
-def analyze_standings(league_url, auth):
+def analyze_standings(league_url, auth, session = None):
     """ Analizamos los equipos de la liga pasada por parametro.
         Devolvemos los ids de los equipos inscritos a esa liga
 
@@ -100,13 +105,14 @@ def analyze_standings(league_url, auth):
         league_url -- URL de la liga
         auth -- Cadena de autenticacion a la web.
     """
-    session = login(auth)
+    if session == None:
+      session = login(auth)
 
     # print(league_url)
     r = session.get(league_url)
     load_status = 0
     while load_status != 200:
-        load_status = r.status_code
+      load_status = r.status_code
 
     soup = BeautifulSoup(r.content, 'html.parser')
     teams_str_a = soup.find_all('table')[0].find_all('a')
@@ -115,7 +121,7 @@ def analyze_standings(league_url, auth):
     # Obtenemos los ids de los equipos que conforman esa liga
     teams_ids = []
     for team_str in teams_str_a + teams_str_b:
-        # print(team_str['href'][team_str['href'].find('=')+1:])
-        teams_ids.append(team_str['href'][team_str['href'].find('=')+1:])
+      # print(team_str['href'][team_str['href'].find('=')+1:])
+      teams_ids.append(team_str['href'][team_str['href'].find('=')+1:])
 
     return teams_ids

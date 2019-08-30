@@ -17,7 +17,7 @@ from ibm_auto_manager.scout import roster_page, player_page
 from ibm_auto_manager.trainer import team
 
 
-def enter_team(auth, db, team_id, get_prog = True):
+def enter_team(auth, db, team_id, get_prog = True, session = None):
   """ Recorremos las páginas de plantilla y cantera del equipo
     y registra los atributos de los jugadores para
     la posterior comprobación de la progresión
@@ -28,7 +28,8 @@ def enter_team(auth, db, team_id, get_prog = True):
     team_id -- Id del equipo
     get_prog -- 
   """
-  session = login(auth)
+  if session is None:
+    session = login(auth)
 
   # http://es.ibasketmanager.com/equipo.php?id=1643
   team_url = "http://es.ibasketmanager.com/" + \
@@ -41,10 +42,15 @@ def enter_team(auth, db, team_id, get_prog = True):
 
   # Analizo el progreso del equipo
   print(show("team_info") + "   > Analizando Equipo: " + str(team_id))
-  team_info = analyze_team(team_id, r.content)
-  print(show("team") + "    -> Equipo: " + str(team_id))
-  insert_team_data(team_info, db)
+  try:
+    team_info = analyze_team(team_id, r.content)
 
+    print(show("team") + "    -> Equipo: " + str(team_id))
+    insert_team_data(team_info, db)
+  except:
+    print(show("Error") + " Team_id: " + str(team_id))
+    pass
+  
   # Seniors
   print(show("roster") + "    -> Plantilla: " + str(team_id))
   players_ids = roster_page.enter_senior_roster(team_id, auth, session)
@@ -56,6 +62,7 @@ def enter_team(auth, db, team_id, get_prog = True):
   juniors_ids = roster_page.enter_junior_roster(team_id, auth, session)
   insert_players_data(auth, db, juniors_ids, get_prog, session)
   update_players(juniors_ids, team_id, db, "J")
+  
 
 def analyze_team(team_id, html_content):
   """ Obtenemos los datos relativos al equipo"""
@@ -107,20 +114,25 @@ def insert_players_data(auth, db, players_ids, get_prog = True, session = None):
     players_ids -- Array de Ids de los jugadores
   """
   for player_id in players_ids:
-    player = player_page.get_player_data(player_id, auth, session)
+    try:
+      player = player_page.get_player_data(player_id, auth, session)
 
-    player_page.insert_player(player, player_id, db)
+      player_page.insert_player(player, player_id, db)
 
-    # Si recibimos la orden de guardar la progresión de los jugadores
-    if(get_prog):
-      future_id = ObjectId((str(int(str(player_id))) + text.get_date_str(datetime.datetime.now(), False)).zfill(24))
-      # print(future_id)
-      if(db.progressions.find_one({"_id": future_id}) is None):
-        prog_id = db.progressions.insert_one(
-          player[1].to_db_collection_prog()).inserted_id
-        # print(show("progression") + ": " + str(prog_id))
+      # Si recibimos la orden de guardar la progresión de los jugadores
+      if(get_prog):
+        future_id = ObjectId((str(int(str(player_id))) + text.get_date_str(datetime.datetime.now(), False)).zfill(24))
+        # print(future_id)
+        if(db.progressions.find_one({"_id": future_id}) is None):
+          prog_id = db.progressions.insert_one(
+            player[1].to_db_collection_prog()).inserted_id
+          # print(show("progression") + ": " + str(prog_id))
 
-      player_page.updateProgressions(player_id, future_id, db)
+        player_page.updateProgressions(player_id, future_id, db)
+    except:
+      print(show("Error") + " Player_Id: " + player_id)
+      pass
+
 
 
 def insert_team_data(team, db):

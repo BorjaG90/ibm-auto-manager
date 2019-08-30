@@ -68,8 +68,8 @@ def analyze_player_page(id_player, html_content):
       juvenil = False
     # print(estado)
     if(estado.find('img') is not None):
-      # print(name + " Ascendido")
-      juvenil = True
+      if(estado.find('img')['title'] == 'Ascendido'):
+        juvenil = True
 
     name = name.strip()
     caja50 = soup.find_all("div", {"class": "caja50"})
@@ -89,9 +89,29 @@ def analyze_player_page(id_player, html_content):
 
     team_id = data1[1].find_all(
       'a')[0]['href'][data1[1].find_all('a')[0]['href'].find('=')+1:]
-    salary = data1[3].text.replace('€', '').replace('.', '').strip()
-    clause = data1[5].text.replace('€', '').replace('.', '').strip()
-    years = str(re.search(r'[\d]+', data1[7].text).group(0)).strip()
+    # Tratamiento de errores de jugadores sin equipo
+    try:
+      salary = data1[3].text.replace('€', '').replace('.', '').strip()
+      if salary == '--':
+        raise ValueError
+    except (ValueError):
+      print(show("Error") + " Player_Id: " + id_player)
+      salary = "0"
+
+    try:
+      clause = data1[5].text.replace('€', '').replace('.', '').strip()
+      if clause == '--':
+        raise ValueError
+    except (ValueError):
+      print(show("Error") + " Player_Id: " + id_player)
+      clause = "0"
+
+    try:
+      years = str(re.search(r'[\d]+', data1[7].text).group(0)).strip()
+    except (AttributeError):
+      print(show("Error") + " Player_Id: " + id_player)
+      years = "0"
+
     country = data1[9].text.strip()
 
     # Atributos
@@ -140,7 +160,6 @@ def analyze_player_page(id_player, html_content):
       comment = comments[comments.find('jugbarranum">')+13:]
       loyalty = comment[:comment.find('</div')]
       # print(loyalty)
-
     return [player.Player(id_player, team_id, name, position, age, heigth,
                           weight, canon, salary, clause, years, juvenil,
                           country),

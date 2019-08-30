@@ -5,6 +5,8 @@ __email__ = 'borjagete90@outlook.es'
 
 import requests
 
+from ibm_auto_manager.common.util import show
+
 def login(payload):
 	""" Devuelve una sesión logueada en la web de IBM
 		con la cual hacer peticiones.
@@ -20,7 +22,5 @@ def login(payload):
 	load_status = 0
 	while load_status != 200:
 		load_status = r.status_code
-	# print('\n[' + time.strftime("%H:%M:%S") + '] \
-	# [LogIn realizado con exito]\n')
-
+	print(show("login") + "[[Relogging]]")
 	return session

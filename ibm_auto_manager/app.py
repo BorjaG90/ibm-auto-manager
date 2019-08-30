@@ -19,6 +19,7 @@ from ibm_auto_manager.general import dashboard_page
 from ibm_auto_manager.scout import market_page, league_page
 from ibm_auto_manager.trainer import team_page
 from ibm_auto_manager.dt import automation
+from ibm_auto_manager.stats import calendar_page
 
 # ----- Functions -----
 def config():
@@ -201,6 +202,14 @@ def run(arg=""):
     print("\nAnalizando contrato")
     automation.auto_offer(connection["auth"])
 
+  elif arg == "--calendar" or arg == "-c" or arg == "calendar":
+    """ Ejecución de ánalisis del calendario de la última temporada"""
+    
+    print("********IBM Auto Manager**********")
+    print("\nObteniendo calendario de la útlima temporada")
+    calendar_page.get_calendar(
+      connection["settings"],connection["auth"],connection["db"])
+
   elif arg == "":
     """ Ejecución normal """
     # Menu
@@ -213,12 +222,17 @@ def run(arg=""):
       print("\n[t] Analizar competicion")
       print("\n[b] Realizar apuesta en subasta")
       print("\n[o] Realizar oferta de renovación")
+      print("\n[c] Analizar calendario")
       print("\n[0] Salir del programa\n")
 
       opcion = input("Introduce una opción: > ")
 
       if opcion == "b":
         automation.auto_bid(connection["auth"])
+
+      if opcion == "c":
+        calendar_page.get_calendar(
+          connection["settings"],connection["auth"],connection["db"])
 
       if opcion == "o":
         automation.auto_offer(connection["auth"])
