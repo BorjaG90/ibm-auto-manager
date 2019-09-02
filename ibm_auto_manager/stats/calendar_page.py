@@ -3,6 +3,9 @@
 __author__ = 'Borja Gete'
 __email__ = 'borjagete90@outlook.es'
 
+
+import re
+
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -106,7 +109,8 @@ def analyze_month(url, auth, db, year, month, option=None, day=None):
                 print(show("calendar") + "  } Game: " + game_type + " : " + game_url )
 
                 game = [game_id, game_type, game_url]
-                # TODO
+                # Obtenemos los datos del partido
+                get_game(game_url, game_id, auth, db, session)
 
 
 
@@ -129,3 +133,85 @@ def analyze_month(url, auth, db, year, month, option=None, day=None):
   else:
     # Analizar el mes entero
     pass
+
+
+def get_game(url, game_id, auth, db, session=None):
+  """ Lee los datos de la página del partido pasado por parámetro
+  
+  Keyword arguments:
+      url -- Página del partido
+      game_id -- ID del partido
+      auth -- Cadena de autenticacion a la web.
+      db -- Objeto de conexion a la BD.
+  """
+  if session is None:
+    session = login(auth)
+
+  r = session.get(url)
+  load_status = 0
+  while load_status != 200:
+    load_status = r.status_code
+
+  soup = BeautifulSoup(r.content, 'html.parser')
+  
+  # Datos del partido
+  home_a = soup.find("div", {"class": "nombreequipo1"}).findAll("a")[0]['href']
+  home_id = home_a[home_a.find("id=") + 3:]
+  away_a = soup.find("div", {"class": "nombreequipo2"}).findAll("a")[0]['href']
+  away_id = away_a[away_a.find("id=") + 3:]
+  print("H: " + home_id + " A: " + away_id)
+  table = soup.find("table",{"class": "datos_partido"})
+  trs = table.findAll("tr")
+  asistencia = trs[1].findAll("td")[0].text
+  ingresos_home = trs[2].findAll("td")[0].text
+  ingresos_away = trs[2].findAll("td")[2].text
+  home_data = [
+    trs[3].findAll("td")[0].text, # Puntos
+    re.search("([\d])+", trs[4].findAll("td")[0].text.split('/')[0])[0], # T2I
+    re.search("([\d])+", trs[4].findAll("td")[0].text.split('/')[1])[0], # T2C
+    re.search("([\d])+", trs[5].findAll("td")[0].text.split('/')[0])[0], # T3I
+    re.search("([\d])+", trs[5].findAll("td")[0].text.split('/')[1])[0], # T3C
+    re.search("([\d])+", trs[6].findAll("td")[0].text.split('/')[0])[0], # TLI
+    re.search("([\d])+", trs[6].findAll("td")[0].text.split('/')[1])[0], # TLC
+    trs[7].findAll("td")[0].text, # RebD
+    trs[8].findAll("td")[0].text, # RebO
+    trs[10].findAll("td")[0].text, # Asi
+    trs[11].findAll("td")[0].text, # Rob
+    trs[12].findAll("td")[0].text, # Per
+    trs[13].findAll("td")[0].text, # TapF
+    trs[14].findAll("td")[0].text, # TapC
+    trs[15].findAll("td")[0].text, # FalR
+    trs[16].findAll("td")[0].text, # FalC
+    trs[17].findAll("td")[0].text, # Val
+  ]
+  print(home_data)
+
+  away_data = [
+    trs[3].findAll("td")[2].text, # Puntos
+    re.search("([\d])+", trs[4].findAll("td")[2].text.split('/')[0])[0], # T2I
+    re.search("([\d])+", trs[4].findAll("td")[2].text.split('/')[1])[0], # T2C
+    re.search("([\d])+", trs[5].findAll("td")[2].text.split('/')[0])[0], # T3I
+    re.search("([\d])+", trs[5].findAll("td")[2].text.split('/')[1])[0], # T3C
+    re.search("([\d])+", trs[6].findAll("td")[2].text.split('/')[0])[0], # TLI
+    re.search("([\d])+", trs[6].findAll("td")[2].text.split('/')[1])[0], # TLC
+    trs[7].findAll("td")[2].text, # RebD
+    trs[8].findAll("td")[2].text, # RebO
+    trs[10].findAll("td")[2].text, # Asi
+    trs[11].findAll("td")[2].text, # Rob
+    trs[12].findAll("td")[2].text, # Per
+    trs[13].findAll("td")[2].text, # TapF
+    trs[14].findAll("td")[2].text, # TapC
+    trs[15].findAll("td")[2].text, # FalR
+    trs[16].findAll("td")[2].text, # FalC
+    trs[17].findAll("td")[2].text, # Val
+  ]
+  print(away_data)
+
+  # print("A: " + asistencia + ", h: " + ingresos_home + ", aw: " + ingresos_away)
+
+
+
+
+
+
+  

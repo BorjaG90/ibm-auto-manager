@@ -86,8 +86,6 @@ def analyze_team(team_id, html_content):
   else:
     id_user = str(0)
 
-  
-
   arena = data[3].find_all('a')[0].text
   # print("Arena: " + arena)
 
