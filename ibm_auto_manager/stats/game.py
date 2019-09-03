@@ -20,7 +20,8 @@ class Game:
       away_id, 
       assistance, 
       home_money, 
-      away_money):
+      away_money,
+      numeric_day):
     self._id = ObjectId(id_game.zfill(24))
     self.date_game = date_game
     self.type_game = type_game
@@ -29,6 +30,7 @@ class Game:
     self.assistance = int(assistance)
     self.home_money = int(home_money)
     self.away_money = int(away_money)
+    self.numeric_day = int(numeric_day)
 
   def __str__(self):
     return "Partido de {}, Id: {} {}-{} Fecha: {}".format(
@@ -49,5 +51,6 @@ class Game:
       "away_id": self.away_id,
       "assistance": self.assistance,
       "home_money": self.home_money,
-      "away_money": self.away_money
+      "away_money": self.away_money,
+      "numeric_day": self.numeric_day
     }

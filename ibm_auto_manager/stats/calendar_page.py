@@ -114,7 +114,8 @@ def analyze_month(url, auth, db, year, month, option=None, day=None):
                 str_day = td_day.find('div',{'class':'numdia'}).text.zfill(2) +\
                    "/" + str(month).zfill(2) + "/" + str(year)
             
-                get_game(game_url, game_id, game_type, str_day, auth, db, session)
+                get_game(game_url, game_id, game_type, str_day, analyze_day,
+                  auth, db, session)
 
     elif option == "E":
       # Analizar el mes hasta el día indicado
@@ -149,7 +150,8 @@ def analyze_month(url, auth, db, year, month, option=None, day=None):
                 str_day = td_day.find('div',{'class':'numdia'}).text.zfill(2) +\
                    "/" + str(month).zfill(2) + "/" + str(year)
             
-                get_game(game_url, game_id, game_type, str_day, auth, db, session)
+                get_game(game_url, game_id, game_type, str_day, analyze_day,
+                  auth, db, session)
     else:
       print(show("calendar") + "ERROR opcion inválida")
 
@@ -184,10 +186,11 @@ def analyze_month(url, auth, db, year, month, option=None, day=None):
             str_day = td_day.find('div',{'class':'numdia'}).text.zfill(2) +\
                 "/" + str(month).zfill(2) + "/" + str(year)
         
-            get_game(game_url, game_id, game_type, str_day, auth, db, session)
+            get_game(game_url, game_id, game_type, str_day, analyze_day,
+              auth, db, session)
 
 
-def get_game(url, game_id, game_type, game_day, auth, db, session=None):
+def get_game(url, game_id, game_type, game_day, numeric_day, auth, db, session=None):
   """ Lee los datos de la página del partido pasado por parámetro
   
   Keyword arguments:
@@ -199,7 +202,8 @@ def get_game(url, game_id, game_type, game_day, auth, db, session=None):
   if session is None:
     session = login(auth)
 
-  r = session.get(url + '&accion=datos')
+  url = url + "&accion=datos"
+  r = session.get(str(url) )
   load_status = 0
   while load_status != 200:
     load_status = r.status_code
@@ -223,7 +227,7 @@ def get_game(url, game_id, game_type, game_day, auth, db, session=None):
       ingresos_away = '0'
 
     game_obj = game.Game(game_day, game_id, game_type, home_id, away_id, 
-      asistencia, ingresos_home, ingresos_away)
+      asistencia, ingresos_home, ingresos_away, numeric_day)
 
     # Inserción del partido en la BD
     insert_game(game_obj, ObjectId(game_id.zfill(24)), db)
@@ -239,7 +243,7 @@ def get_game(url, game_id, game_type, game_day, auth, db, session=None):
       # Stats de Equipos
       # Equipo Anfitrión
       home_stats = team_stats.TeamStats(
-        game_id + home_id, game_id, home_id,
+        game_id + home_id, game_id, home_id, numeric_day,
         trs[3].findAll("td")[0].text, # Puntos
         re.search("([\d])+", trs[4].findAll("td")[0].text.split('/')[0])[0], # T2C
         re.search("([\d])+", trs[4].findAll("td")[0].text.split('/')[1])[0], # T2I
@@ -269,7 +273,7 @@ def get_game(url, game_id, game_type, game_day, auth, db, session=None):
 
       # Equipo Visitante
       away_stats = team_stats.TeamStats(
-        game_id + away_id, game_id, away_id,
+        game_id + away_id, game_id, away_id, numeric_day, 
         trs[3].findAll("td")[2].text, # Puntos
         re.search("([\d])+", trs[4].findAll("td")[2].text.split('/')[0])[0], # T2C
         re.search("([\d])+", trs[4].findAll("td")[2].text.split('/')[1])[0], # T2I
@@ -298,10 +302,10 @@ def get_game(url, game_id, game_type, game_day, auth, db, session=None):
       )
 
       # Stats de Jugadores
-      get_player_stats(url, game_id, home_id, away_id, auth, db, session)
+      get_player_stats(url, game_id, home_id, away_id,numeric_day, auth, db, session)
   
 
-def get_player_stats(url, game_id, home_id, away_id, auth, db, session=None):
+def get_player_stats(url, game_id, home_id, away_id, numeric_day, auth, db, session=None):
   """ Lee las estadísticas de la página del partido pasado por parámetro
   
   Keyword arguments:
@@ -331,7 +335,7 @@ def get_player_stats(url, game_id, home_id, away_id, auth, db, session=None):
     player_id = player_a[player_a.find("id_jugador=") + 11:]
     
     player_data_stats = player_stats.PlayerStats(
-      game_id + player_id, game_id, home_id, player_id,
+      game_id + player_id, game_id, home_id, player_id, numeric_day,
       tds[4].text,
       tds[5].text.split('/')[0], # T2C
       tds[5].text.split('/')[1], # T2I
@@ -371,7 +375,7 @@ def get_player_stats(url, game_id, home_id, away_id, auth, db, session=None):
     player_id = player_a[player_a.find("id_jugador=") + 11:]
     
     player_data_stats = player_stats.PlayerStats(
-      game_id + player_id, game_id, away_id, player_id,
+      game_id + player_id, game_id, away_id, player_id, numeric_day,
       tds[4].text,
       tds[5].text.split('/')[0], # T2C
       tds[5].text.split('/')[1], # T2I

@@ -17,12 +17,14 @@ class PlayerStats:
       game_id,
       team_id,
       player_id,
+      numeric_day,
       points, t2c, t2i, t3c, t3i, tlc, tli, rebd, rebo, ass, 
       ste, turn, blkf, blkc, foulr, foulc, min, seg, val):
     self._id = ObjectId(id_stats.zfill(24))
     self.game_id = ObjectId(game_id.zfill(24))
     self.team_id = ObjectId(team_id.zfill(24))
     self.player_id = ObjectId(player_id.zfill(24))
+    self.numeric_day = int(numeric_day)
     self.points = int(points)
     self.t2c = int(t2c)
     self.t2i = int(t2i)
@@ -62,6 +64,7 @@ class PlayerStats:
       "game_id": self.game_id,
       "team_id": self.team_id,
       "player_id": self.player_id,
+      "numeric_day": self.numeric_day,
       "points": self.points,
       "t2i": self.t2i,
       "t2c": self.t2c,
