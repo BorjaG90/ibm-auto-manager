@@ -4,7 +4,7 @@
 
 [![Project](https://img.shields.io/badge/Project-Personal-blue.svg)][repo-link]
 [![Repository](https://img.shields.io/badge/github-black?logo=github)][repo-link]
-[![Language](https://img.shields.io/badge/Python-FFDC4D?logo=python)][python-link]
+[![Language](https://img.shields.io/badge/Python-4B8BBE?logo=python&logoColor=FFE873)][python-link]
 
 A automatized manager for the web game [International Basketball Manager](http://es.ibasketmanager.com)
 
